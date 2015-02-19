@@ -1,7 +1,8 @@
 package com.sgw.problems
 
 /**
- * author: steve
+ * For the numbers between 1 and 100, print out either "Fizz" for those divisible by 3, "Buzz" for those divisible by 5
+ * or "FizzBuzz" for those divisible by 3 and 5.
  */
 object FizzBuzz {
   def main (args: Array[String]) {

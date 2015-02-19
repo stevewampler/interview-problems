@@ -15,6 +15,7 @@ object Fibonacci {
 
   def fibonacci(n: Int): List[Int] = fibonacci(n, List(1, 0))
 
+  // using foldLeft
   def fibonacci2(n: Int): List[Int] =
     (0 until n - 2).foldLeft(List(1, 0))((z, _) => (z.head + z.tail.head) :: z).reverse
 

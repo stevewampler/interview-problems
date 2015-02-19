@@ -3,6 +3,8 @@ package com.sgw.problems
 /**
  * Finds all of the primes between 2 and n.
  *
+ * This version isn't as efficient as the PrimeSieveMutable version.
+ *
  * See: http://en.wikipedia.org/wiki/Sieve_of_Eratosthenes
  */
 object PrimeSieve {

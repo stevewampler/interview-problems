@@ -8,9 +8,13 @@ object TravelingChef {
   case class Node(id: Int, var edges: List[Edge])
 
   /**
+   * See: http://www.codechef.com/problems/TABUS
+   *
    * A chef has to get from bus stop 1 to n within a specified time period t. He must arrive at a bus stop before
    * the bus leaves (not when it leaves). I.e. he has to wait at least 1 minute. We want to minimize the
    * maximum time he waits at any one bus stop.
+   *
+   * This solution works, but could be better. It should guarantee that the path actually ends at the last bus stop.
    *
    * @param n number of bus stations
    * @param t how long (time) the chef has to get from station 1 to n

@@ -2,6 +2,9 @@ package com.sgw.problems
 
 import scala.annotation.tailrec
 
+/**
+ * Find the index of a target string within a source string.
+ */
 object IndexOf {
   def indexOf(str: String, trg: String): Int = {
     var i = 0

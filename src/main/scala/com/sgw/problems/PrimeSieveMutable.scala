@@ -1,9 +1,7 @@
 package com.sgw.problems
 
-import scala.collection.mutable.ArrayBuffer
-
 /**
- * Finds all of the primes between 2 and n.
+ * Finds all of the primes between 2 and n using a mutable buffer.
  *
  * See: http://en.wikipedia.org/wiki/Sieve_of_Eratosthenes
  */
