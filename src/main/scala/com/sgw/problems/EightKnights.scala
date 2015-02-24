@@ -8,6 +8,7 @@ import scala.util.Try
  * knights can check each other.
  */
 object EightKnights {
+  // the attach positions of a knight relative to the knight's current position on the board
   private val OFFSETS = List(
     ( 0,  0),
     (-1, -2),
@@ -21,6 +22,7 @@ object EightKnights {
   )
 
   case class Knight(id: Int, n: Int, row: Int, col: Int) {
+    // advances the knight one position on the board by row and then column
     def advance(): Knight = {
       if (row + 1 >= n) {
         copy(row = 0, col = col + 1)
@@ -29,6 +31,7 @@ object EightKnights {
       }
     }
 
+    // checks to see if this knight's current position is off the right edge of the board
     def isOffBoard: Boolean = col >= n
   }
 
