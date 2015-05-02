@@ -19,8 +19,21 @@ object Fibonacci {
   def fibonacci2(n: Int): List[Int] =
     (0 until n - 2).foldLeft(List(1, 0))((z, _) => (z.head + z.tail.head) :: z).reverse
 
+  // hmmmm
+  def fibonacci3(n: Int, result: List[Int] = List[Int]()): List[Int] = {
+    n match {
+      case 0 => 0 :: result
+      case 1 => 1 :: fibonacci3(n - 1, result)
+      case _ => {
+        val r = fibonacci3(n - 1, result)
+        (r.head + r.tail.head) :: r
+      }
+    }
+  }
+
   def main (args: Array[String]) {
     println(fibonacci(11))
     println(fibonacci2(11))
+    println(fibonacci3(11).reverse)
   }
 }

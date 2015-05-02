@@ -35,5 +35,20 @@ D
     }
   }
 
+
   combinations("", 0, values)
+
+  println()
+
+  def combinations2(accum: String, values: List[Char], result: String = ""): String =
+    values.zipWithIndex.foldLeft(result) {
+      case (result2, (v, i)) => {
+        val newAccum = accum + v // loop adds the "B" to "A" for example
+        val newResult = result2 + newAccum + "\n"
+
+        combinations2(newAccum, values.drop(i + 1), newResult) // recurse to add the "C" and "D" combinations to "AB" for example
+      }
+    }
+
+  println(combinations2("", values))
 }
