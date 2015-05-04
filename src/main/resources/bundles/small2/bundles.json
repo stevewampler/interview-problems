@@ -1,0 +1,74 @@
+[
+  {
+    "products": [
+      {
+        "id": 0,
+        "price": 10.00
+      }
+    ],
+    "total": 10.00,
+    "bundle_id": 0
+  },
+  {
+    "products": [
+      {
+        "id": 1,
+        "price": 50.00
+      }
+    ],
+    "total": 50.00,
+    "bundle_id": 1
+  },
+  {
+    "products": [
+      {
+        "id": 2,
+        "price": 75.00
+      }
+    ],
+    "total": 75.00,
+    "bundle_id": 2
+  },
+  {
+    "products": [
+      {
+        "id": 0,
+        "price": 9.00
+      },
+      {
+        "id": 2,
+        "price": 75.00
+      }
+    ],
+    "total": 84.00,
+    "bundle_id": 3
+  },
+  {
+    "products": [
+      {
+        "id": 1,
+        "price": 50.00
+      },
+      {
+        "id": 2,
+        "price": 70.00
+      }
+    ],
+    "total": 120.00,
+    "bundle_id": 4
+  },
+  {
+    "products": [
+      {
+        "id": 0,
+        "price": 12.00
+      },
+      {
+        "id": 2,
+        "price": 0.00
+      }
+    ],
+    "total": 82.00,
+    "bundle_id": 5
+  }
+]
