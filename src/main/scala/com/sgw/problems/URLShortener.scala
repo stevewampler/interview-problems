@@ -14,11 +14,15 @@ object URLShortener {
 }
 
 /**
- * A URL shortener. Uses a couple of BloomFilters to keep track of the URLs that may have already been shorted, a set of DB
+ * A URL shortener. Uses a couple of BloomFilters to keep track of the URLs that might have already been shorted or
+ * definitely have not, a set of DB
  * tables to keep track of the ones that actually have been shortened, and a set of LruMaps to cache recently used
- * URLs. URLs are mapped to short alphanumeric ids by generating a short string of random alphanumerics and then checking
- * to see if that string has already been used. If so, the shortener generates a new random string until until it
- * finds one that hasn't been used.
+ * URLs.
+ *
+ * To shorten a URL, the shortener generates short alphanumeric ids by generating a short
+ * string of random alphanumeric characters and then checking
+ * to see if that string has already been used as an id.
+ * If so, the shortener generates a new random string until it finds one that hasn't been used.
  *
  * The shorten method return a tuple containing the shortened URL and a new URLShortener. Clients should consider
  * using a Scalaz State monad to manage the state transitions.
@@ -44,22 +48,20 @@ case class URLShortener(
    * @return the short URL
    */
   def shorten(longURL: String): Future[(String, URLShortener)] = future {
-    synchronized {
-      // if we might have already seen the url ...
-      val (id, newURLShortener) = if (urlBloomFilter.contains(longURL).isTrue) {
-        // if the url is in the LruMap ...
-        urlToIdMap.get(longURL).map(id => (id, this)).getOrElse {
-          // see if the DB contains the URL, and if so, return the URL's id
-          // TODO for now, assume the DB doesn't contain the URL and just get the shortened URL's id
-          shortenImpl(longURL)
-        }
-      } else {
-        // we haven't seen the URL, so shorten it
+    // if we might have already seen the url ...
+    val (id, newURLShortener) = if (urlBloomFilter.contains(longURL).isTrue) {
+      // if the url is in the LruMap ...
+      urlToIdMap.get(longURL).map(id => (id, this)).getOrElse {
+        // see if the DB contains the URL, and if so, return the URL's id
+        // TODO for now, assume the DB doesn't contain the URL and just get the shortened URL's id
         shortenImpl(longURL)
       }
-
-      (URLShortener.HOST + "/" + id, newURLShortener)
+    } else {
+      // we haven't seen the URL, so shorten it
+      shortenImpl(longURL)
     }
+
+    (URLShortener.HOST + "/" + id, newURLShortener)
   }
 
   private def shortenImpl(longURL: String): (String, URLShortener) = {
@@ -94,18 +96,16 @@ case class URLShortener(
   )
 
   def lookup(id: String): Future[Option[String]] = future {
-    synchronized {
-      // if we might already know the id ...
-      if (idBloomFilter.contains(id).isTrue) {
-        // see if the local LruMap contains the id
-        idToURLMap.get(id) orElse {
-          // see if the DB contains the id
-          // TODO for now, just return None
-          None
-        }
-      } else { // we don't know the id
+    // if we might already know the id ...
+    if (idBloomFilter.contains(id).isTrue) {
+      // see if the local LruMap contains the id
+      idToURLMap.get(id) orElse {
+        // see if the DB contains the id
+        // TODO for now, just return None
         None
       }
+    } else { // we don't know the id
+      None
     }
   }
 }
