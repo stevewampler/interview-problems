@@ -14,9 +14,21 @@ object URLShortener {
 }
 
 /**
- * A mock up of a URL shortener.
+ * A URL shortener. Uses a couple of BloomFilters to keep track of the URLs that may have already been shorted, a set of DB
+ * tables to keep track of the ones that actually have been shortened, and a set of LruMaps to cache recently used
+ * URLs. URLs are mapped to short alphanumeric ids by generating a short string of random alphanumerics and then checking
+ * to see if that string has already been used. If so, the shortener generates a new random string until until it
+ * finds one that hasn't been used.
+ *
+ * The shorten method return a tuple containing the shortened URL and a new URLShortener. Clients should consider
+ * using a Scalaz State monad to manage the state transitions.
+ *
+ * URLShorteners can be combined using the ++ method.
  *
  * TODO: replace the Maps with LruMaps
+ * TODO: back the LruMaps with a set of DB tables.
+ * TODO: put a RESTful web interface on top of the shortener code
+ * TODO: initialize the BloomFilters from the DB tables
  */
 case class URLShortener(
   idBloomFilter: BF = new BloomFilterMonoid(6, 32, 1).zero,
