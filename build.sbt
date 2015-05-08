@@ -16,8 +16,9 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor" % "2.1.4",
   "com.typesafe.akka" %% "akka-slf4j" % "2.1.4",
   "ch.qos.logback" % "logback-classic" % "1.0.13",
-  "org.scalatest" % "scalatest_2.10" % "2.2.1"
+  "org.scalatest" % "scalatest_2.10" % "2.2.1",
   // "net.databinder.dispatch" %% "dispatch-core" % "0.11.2"
+  "com.twitter" %% "algebird-core" % "0.9.0"
 )
 
 resolvers ++= Seq(
