@@ -1,6 +1,6 @@
 package com.sgw.projecteuler
 
-import com.sgw.problems.PrimeSieveMutable
+import com.sgw.problems.{PrimeSieve, PrimeSieveMutable}
 
 /**
  * From: https://projecteuler.net/problem=5
@@ -16,7 +16,7 @@ object P5SmallestMultiple {
     }
 
   def fastSmallestMultiple(n: Int): Int = {
-    val primes = PrimeSieveMutable.findPrimes(n)
+    val primes = PrimeSieve.primes(n)
 
     val limit = Math.sqrt(n)
 

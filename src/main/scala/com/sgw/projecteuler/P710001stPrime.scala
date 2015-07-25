@@ -1,24 +1,22 @@
 package com.sgw.projecteuler
 
-import com.sgw.problems.PrimeSieveMutable
+import com.sgw.problems.{PrimeSieve, PrimeSieveMutable}
 
 /**
- * author: steve
+ * From: https://projecteuler.net/problem=7
+ *
+ * By listing the first six prime numbers: 2, 3, 5, 7, 11, and 13, we can see that the 6th prime is 13.
+ *
+ * What is the 10001st prime number?
  */
 object P710001stPrime {
   def main(args: Array[String]) {
     val n = 10001
-    val n2 = (n * Math.log(n)).toInt
-    val n3 = ((n + 1) * Math.log(n + 1)).toInt
 
-    println(1/Math.log(n))
+    val maybeNthPrime = PrimeSieve.prime(n)
 
-    println(n2)
-    println(n3)
+    println(s"$n prime: $maybeNthPrime")
 
-    // val primes = PrimeSieveMutable.findPrimes(n2)
-
-    // println(primes.size)
-    // println(primes.last)
+    assert(maybeNthPrime.exists(_ == 104743))
   }
 }
