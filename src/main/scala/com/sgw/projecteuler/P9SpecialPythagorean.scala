@@ -1,7 +1,5 @@
 package com.sgw.projecteuler
 
-import scala.annotation.tailrec
-
 /**
  *
  * A Pythagorean triplet is a set of three natural numbers, a < b < c, for which,
@@ -15,7 +13,7 @@ import scala.annotation.tailrec
  */
 object P9SpecialPythagorean {
   def findSpecialPythagoreanTriplet(a: Long = 1, b: Long = 2): Option[(Long, Long, Long)] = {
-    if (b > 1000) return None
+    if (a + b > 1000) return None
     if (a >= b) return findSpecialPythagoreanTriplet(1, b + 1)
 
     val cDouble = Math.sqrt(a*a + b*b)
