@@ -5,6 +5,8 @@ import org.specs2.execute.Result
 
 import java.util.concurrent.ScheduledThreadPoolExecutor
 
+import scala.util.Random
+import scalaz.{-\/, \/-}
 import scalaz.concurrent.Task
 
 /**
@@ -14,16 +16,14 @@ class TaskSpec extends Specification {
   implicit val stpe = new ScheduledThreadPoolExecutor(8)
 
   "A successful Task" should {
-    "run without an error" in Result.unit {
-      val testThreadName = Thread.currentThread().getName
+    "run without an error on a separate thread" in Result.unit {
+      val task = Task { Thread.currentThread() }
 
-      val task = Task { s"Hello World from thread ${Thread.currentThread().getName}, run from thread $testThreadName." }
+      val result = task.attemptRun
 
-      val attemptedRun = task.attemptRun
+      result.isRight must beTrue
 
-      attemptedRun.isRight must beTrue
-
-      attemptedRun.foreach(println)
+      result.foreach(thread => thread must_!= Thread.currentThread())
     }
   }
 
@@ -31,24 +31,106 @@ class TaskSpec extends Specification {
     "fail" in Result.unit {
       val task = Task { throw new RuntimeException("Fail!") }
 
-      val attemptedRun = task.attemptRun
+      task.attemptRun.isLeft must beTrue
+    }
+  }
 
-      attemptedRun.isLeft must beTrue
+  "A flat-mapped set of Tasks" should {
+    "succeed" in Result.unit {
+      val chainOfTasks = for {
+        r1 <- Task("A")
+        r2 <- Task(r1 + "B")
+        r3 <- Task(r2 + "C")
+        r4 <- Task(r3 + "D")
+      } yield r4
+
+      val result = chainOfTasks.attemptRun
+
+      result.isRight must beTrue
+
+      result.foreach(_ must be_==("ABCD"))
+    }
+  }
+
+  "A flat-mapped set of Tasks" should {
+    "run on the same thread" in Result.unit {
+      val chain = for {
+        t1 <- Task(Thread.currentThread())
+        t2 <- {
+          t1 must_== Thread.currentThread()
+          Task(Thread.currentThread())
+        }
+        t3 <- {
+          t2 must_== Thread.currentThread()
+          Task(Thread.currentThread())
+        }
+        t4 <- {
+          t3 must_== Thread.currentThread()
+          Task(Thread.currentThread())
+        }
+      } yield t4
+
+      val result = chain.attemptRun
+
+      result.isRight must beTrue
+
+      result.foreach(thread => thread must_!= Thread.currentThread())
+    }
+  }
+
+  "A folded set of flatMapped Tasks" should {
+    "not run on the main thread" in Result.unit {
+      val numTasks = 10
+
+      val chain = (0 until numTasks).foldLeft(Task(List[String](Thread.currentThread.getName))) {
+        (task, _) => task.flatMap(list => Task(Thread.currentThread.getName :: list))
+      }
+
+      val result = chain.attemptRun
+
+      result.isRight must beTrue
+
+      result.foreach(threadNames => {
+        threadNames.size must_== numTasks + 1
+        // threadNames.foreach(println)
+        threadNames.contains(Thread.currentThread.getName) must beFalse
+      })
+    }
+  }
+
+  "A flat-mapped set of Tasks where one in the middle fails" should {
+    "fail" in Result.unit {
+      val chainOfTasks = for {
+        r1 <- Task("A")
+        r2 <- Task(r1 + "B")
+        r3 <- Task[String](throw new RuntimeException("Fail!"))
+        r4 <- Task(r3 + "D")
+      } yield r4
+
+      val result = chainOfTasks.attemptRun
+
+      result.isRight must beFalse
     }
   }
 
   "A flat-mapped set of Tasks" should {
     "run sequentially" in Result.unit {
       def addTime(times: List[Long]): Task[List[Long]] = Task {
-                                                                Thread.sleep(100)
-                                                                System.currentTimeMillis() :: times
-                                                              }
+        Thread.sleep(100)
+        System.currentTimeMillis() :: times
+      }
 
       val startTime = System.currentTimeMillis()
 
-      val chain = addTime(List(startTime)).flatMap(times => addTime(times)).flatMap(times => addTime(times))
+      // val chainOfTasks = addTime(List(startTime)).flatMap(times => addTime(times)).flatMap(times => addTime(times))
 
-      chain.attemptRun.map(times => times.foldLeft((true, Long.MaxValue)) {
+      val chainOfTasks = for {
+        times1 <- addTime(List(startTime))
+        times2 <- addTime(times1)
+        times3 <- addTime(times2)
+      } yield times3
+
+      chainOfTasks.attemptRun.map(times => times.foldLeft((true, Long.MaxValue)) {
         case ((isOrdered, currentTime), time) => (isOrdered && currentTime > time, time)
       }).map {
         case (isOrdered, _) => isOrdered must beTrue
@@ -82,6 +164,16 @@ class TaskSpec extends Specification {
         startTime
       })
       Task.gatherUnordered(tasks).attemptRun.map(list => list.exists(item => list.head - item > 50) must beFalse).isRight must beTrue
+    }
+
+    "run multiple tasks on different threads" in Result.unit {
+      val tasks = (0 until 5).map(i => Task {
+        Thread.currentThread()
+      })
+      Task.gatherUnordered(tasks).attemptRun.map(list => {
+        val numUniqueThreads = list.toSet.size
+        numUniqueThreads must be_>(1) // we should have used at least two threads
+      }).isRight must beTrue
     }
   }
 
