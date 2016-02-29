@@ -12,15 +12,17 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor" % "2.1.4",
   "com.typesafe.akka" %% "akka-slf4j" % "2.1.4",
   "ch.qos.logback" % "logback-classic" % "1.0.13",
-  "org.scalatest" %% "scalatest" % "latest.release" % "test",
+  "org.scalatest" %% "scalatest" % "2.2.6" % "test",
   "org.specs2" %% "specs2-core" % "3.6.4" % "test",
   "com.twitter" %% "algebird-core" % "0.9.0",
   "org.scalaz"  %% "scalaz-core" % "latest.release",
-  "org.scalaz"  %% "scalaz-concurrent" % "latest.release"
+  "org.scalaz"  %% "scalaz-concurrent" % "latest.release",
+  "org.scalaz.stream" %% "scalaz-stream" % "0.7a"
 )
 
 resolvers ++= Seq(
   "Spray repository" at "http://repo.spray.io",
-  "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/"
+  "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/",
+  "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases"
 )
     
