@@ -1,9 +1,8 @@
 package com.sgw.problems
 
 /**
- * So, write a function that, given two tree nodes, will return the node's relationship (if any) in terms of "degree" and how far removed
+ * Write a function that, given two tree nodes, will return the node's relationship (if any) in terms of "degree" and how far removed
  * they are from each other.
- *
  *
  * n1 = node 1
  * n2 = node 2

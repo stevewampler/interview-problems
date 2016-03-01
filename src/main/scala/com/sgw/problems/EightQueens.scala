@@ -1,5 +1,7 @@
 package com.sgw.problems
 
+import scala.annotation.tailrec
+
 /**
  * Given n queens on an n x n chess board, print out of the possible positions of all n queues such that no two
  * queens can check each other.
