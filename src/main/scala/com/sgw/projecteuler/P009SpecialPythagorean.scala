@@ -12,7 +12,7 @@ package com.sgw.projecteuler
  *
  * Find the product abc.
  */
-object P9SpecialPythagorean {
+object P009SpecialPythagorean {
   def findSpecialPythagoreanTriplet(a: Long = 1, b: Long = 2): Option[(Long, Long, Long)] = {
     if (a + b > 1000) return None
     if (a >= b) return findSpecialPythagoreanTriplet(1, b + 1)

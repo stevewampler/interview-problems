@@ -9,7 +9,7 @@ import com.sgw.problems.{PrimeSieve, PrimeSieveMutable}
  *
  * What is the 10001st prime number?
  */
-object P710001stPrime {
+object P00710001stPrime {
   def main(args: Array[String]) {
     val n = 10001
 

@@ -11,7 +11,7 @@ import scala.annotation.tailrec
  *
  * What is the largest prime factor of the number 600851475143
  */
-object P3LargestPrimeFactor {
+object P003LargestPrimeFactor {
   val primes = PrimeSieveMutable.findPrimes(10000)
 
   @tailrec

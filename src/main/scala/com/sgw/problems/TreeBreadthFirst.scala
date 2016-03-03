@@ -8,7 +8,7 @@ object Node {
   def apply(value: Int, leftOpt: Option[Node], rightOpt: Option[Node]) = new Node(value, leftOpt, rightOpt)
 }
 
-class Node(val value: Int, val leftOpt: Option[Node], val rightOpt: Option[Node])
+class Node(val value: Int, val maybeLeft: Option[Node], val maybeRight: Option[Node])
 
 /**
  * Returns a string representing the values of the nodes of a binary tree in breadth-first order.
@@ -32,8 +32,8 @@ object TreeBreadthFirst {
 
     builder.append(node.value)
 
-    val leftQueue  = node.leftOpt.map(childNode => newQueue.enqueue( (level + 1, childNode) )).getOrElse(newQueue)
-    val rightQueue = node.rightOpt.map(childNode => leftQueue.enqueue( (level + 1, childNode) )).getOrElse(leftQueue)
+    val leftQueue  = node.maybeLeft.map(childNode => newQueue.enqueue( (level + 1, childNode) )).getOrElse(newQueue)
+    val rightQueue = node.maybeRight.map(childNode => leftQueue.enqueue( (level + 1, childNode) )).getOrElse(leftQueue)
 
     breadthFirstImpl(level, rightQueue, builder)
   }

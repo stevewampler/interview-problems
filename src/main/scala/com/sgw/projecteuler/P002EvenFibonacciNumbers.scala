@@ -9,7 +9,7 @@ package com.sgw.projecteuler
  *
  * By considering the terms in the Fibonacci sequence whose values do not exceed four million, find the sum of the even-valued terms.
  */
-object P2EvenFibonacciNumbers {
+object P002EvenFibonacciNumbers {
    def fib(max: Int, acc: List[Int] = List[Int](), p1: Int = 0, p2: Int = 1): List[Int] = {
      val p = p1 + p2
 

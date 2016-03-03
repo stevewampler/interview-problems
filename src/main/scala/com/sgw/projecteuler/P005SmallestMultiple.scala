@@ -9,14 +9,14 @@ import com.sgw.problems.{PrimeSieve, PrimeSieveMutable}
  *
  * What is the smallest positive number that is evenly divisible by all of the numbers from 1 to 20?
  */
-object P5SmallestMultiple {
+object P005SmallestMultiple {
   def bruteForceSmallestMultiple(n: Int): Int =
     (1 to Integer.MAX_VALUE - 1).find(x => (1 to n).forall(f => x % f == 0)).getOrElse {
       throw new RuntimeException("This shouldn't happen!")
     }
 
   def fastSmallestMultiple(n: Int): Int = {
-    val primes = PrimeSieve.primes(n)
+    val primes = PrimeSieve.primesList(n)
 
     val limit = Math.sqrt(n)
 

@@ -14,17 +14,19 @@ import java.lang.Math._
  * See: http://math.stackexchange.com/questions/1257/is-there-a-known-mathematical-equation-to-find-the-nth-prime
  */
 object PrimeSieve {
+  private  def createSieve(maxPrime: Int): Array[Boolean] = (0 until maxPrime).map(_ % 2 == 0).toArray
+  
   /**
    * Returns a list of all of the prime numbers less than the number n.
    * 
-   * @param n the upper limit on the list of prime numbers
+   * @param maxPrime the upper limit on the list of prime numbers
    *          
    * @return
    */
-  def primes(n: Int): List[Int] = {
-    val sieve = (0 until n).map(num => (num % 2 == 0, num)).toArray
+  def primesList(maxPrime: Int): List[Int] = {
+    val sieve = createSieve(maxPrime)
 
-    (3 to n by 2).foldLeft(List[Int](2)) {
+    (3 to maxPrime by 2).foldLeft(List[Int](2)) {
       case (primeNumbers, num) =>
         findNextPrime(primeNumbers.head, sieve).map(primeNumber => {
           markFactors(primeNumber, sieve)
@@ -32,6 +34,40 @@ object PrimeSieve {
         }).getOrElse(primeNumbers)
     }
   }.reverse
+
+  /**
+   * Returns an iterator of all of the prime numbers less than the number n from largest to smallest.
+   *
+   * @param maxPrime the upper limit on the list of prime numbers
+   *
+   * @return
+   */
+  def primes(maxPrime: Int): Iterator[Int] = {
+    val sieve = createSieve(maxPrime)
+
+    var lastPrime = 2
+
+    val iterator = (3 to maxPrime by 2).toIterator.map(num =>
+      findNextPrime(lastPrime, sieve).map(primeNumber => {
+        markFactors(primeNumber, sieve)
+        lastPrime = primeNumber
+        primeNumber
+      })
+    ).takeWhile(_.isDefined).map(_.get)
+
+    new Iterator[Int] {
+      private var isFirst = true
+
+      def hasNext: Boolean =isFirst || iterator.hasNext
+
+      def next(): Int = if (isFirst) {
+        isFirst = false
+        2
+      } else {
+        iterator.next()
+      }
+    }
+  }
 
   /**
    * Returns the bounds of the nth prime number.
@@ -52,16 +88,23 @@ object PrimeSieve {
     if (n <= 1) return None
 
     if (n < 6) {
-      primes(20).drop(n-1).headOption
+      primesList(20).drop(n-1).headOption
     } else {
       val (_, upperBounds) = nthPrimeBounds(n)
-      primes(upperBounds).drop(n-1).headOption
+      primesList(upperBounds).drop(n-1).headOption
     }
   }
 
-  private def findNextPrime(prime: Int, sieve: Array[(Boolean, Int)]): Option[Int] =
-    (prime until sieve.size).dropWhile(i => sieve(i)._1).headOption.map(i => sieve(i)._2)
+  private def findNextPrime(prime: Int, sieve: Array[Boolean]): Option[Int] = {
+    val iterator = (prime until sieve.length).toIterator.map(i => (i, sieve(i))).dropWhile {
+      case (_, taken) => taken
+    }.map {
+      case (i, _) => i
+    }
 
-  private def markFactors(prime: Int, sieve: Array[(Boolean, Int)]): Unit =
-    (prime until sieve.size by prime).foreach(i => sieve(i) = (true, sieve(i)._2))
+    if (iterator.hasNext) Some(iterator.next()) else None
+  }
+
+  private def markFactors(prime: Int, sieve: Array[Boolean]): Unit =
+    (prime until sieve.length by prime).foreach(i => sieve(i) = true)
 }

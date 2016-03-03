@@ -7,7 +7,7 @@ package com.sgw.projecteuler
  *
  * Find the largest palindrome made from the product of two 3-digit numbers.
  */
-object P4LargestPalindromeProduct {
+object P004LargestPalindromeProduct {
   private def minNum(numDigits: Int): Int = Math.pow(10, numDigits - 1).toInt
   private def maxNum(numDigits: Int): Int = minNum(numDigits + 1) - 1
 

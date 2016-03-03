@@ -9,7 +9,7 @@ import scala.annotation.tailrec
  *
  *
  */
-object P8LargestProductInSeries {
+object P008LargestProductInSeries {
   @tailrec
   def maxProduct(values: Seq[Long], numAdjacent: Int, oldAdjacentValues: Seq[Long] = Seq(), oldMax: Long = Long.MinValue): (Seq[Long], Long) = {
     if (values.length < numAdjacent) return (oldAdjacentValues, oldMax)

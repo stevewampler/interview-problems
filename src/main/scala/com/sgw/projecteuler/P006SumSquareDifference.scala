@@ -13,7 +13,7 @@ package com.sgw.projecteuler
  *
  * Find the difference between the sum of the squares of the first one hundred natural numbers and the square of the sum.
  */
-object P6SumSquareDifference {
+object P006SumSquareDifference {
   def sumOfSquares(n: Int): Int = n * (2 * n + 1) * (n + 1) / 6
   def sumOf1ToN(n: Int): Int = n * (n + 1) / 2
 

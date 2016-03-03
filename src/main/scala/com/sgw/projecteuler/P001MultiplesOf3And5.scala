@@ -7,7 +7,7 @@ package com.sgw.projecteuler
  *
  * Find the sum of all the multiples of 3 or 5 below 1000.
  */
-object P1MultiplesOf3And5 {
+object P001MultiplesOf3And5 {
   def main (args: Array[String]) {
     val result1 = (1 until 1000).filter(i => i % 3 == 0 || i % 5 == 0).sum
 
