@@ -14,14 +14,17 @@ import java.lang.Math._
  * See: http://math.stackexchange.com/questions/1257/is-there-a-known-mathematical-equation-to-find-the-nth-prime
  */
 object PrimeSieve {
-  private  def createSieve(maxPrime: Int): Array[Boolean] = (0 until maxPrime).map(_ % 2 == 0).toArray
+  private def createSieve(maxPrime: Int): Array[Boolean] = {
+    val sieve = new Array[Boolean](maxPrime)
+    sieve(1) = true // 1 is not prime, so mark it
+    (0 until maxPrime by 2).foreach(i => sieve(i) = true) // mark all even numbers
+    sieve
+  }
   
   /**
    * Returns a list of all of the prime numbers less than the number n.
    * 
    * @param maxPrime the upper limit on the list of prime numbers
-   *          
-   * @return
    */
   def primesList(maxPrime: Int): List[Int] = {
     val sieve = createSieve(maxPrime)
@@ -36,25 +39,25 @@ object PrimeSieve {
   }.reverse
 
   /**
-   * Returns an iterator of all of the prime numbers less than the number n from largest to smallest.
+   * Returns an iterator of all of the prime numbers less than the number maxPrime from largest to smallest.
    *
-   * @param maxPrime the upper limit on the list of prime numbers
-   *
-   * @return
+   * @param maxPrime the maximum prime number
    */
   def primes(maxPrime: Int): Iterator[Int] = {
     val sieve = createSieve(maxPrime)
 
-    var lastPrime = 2
+    var lastPrime = 2 // start with two (is prime)
 
+    // iterate over the odd numbers
     val iterator = (3 to maxPrime by 2).toIterator.map(num =>
       findNextPrime(lastPrime, sieve).map(primeNumber => {
         markFactors(primeNumber, sieve)
         lastPrime = primeNumber
         primeNumber
       })
-    ).takeWhile(_.isDefined).map(_.get)
+    ).takeWhile(maybePrime => maybePrime.isDefined).map(_.get)
 
+    // wrap the above iterator in one that will also return 2
     new Iterator[Int] {
       private var isFirst = true
 
@@ -97,14 +100,14 @@ object PrimeSieve {
 
   private def findNextPrime(prime: Int, sieve: Array[Boolean]): Option[Int] = {
     val iterator = (prime until sieve.length).toIterator.map(i => (i, sieve(i))).dropWhile {
-      case (_, taken) => taken
+      case (_, isMarked) => isMarked // drop until we find a prime
     }.map {
-      case (i, _) => i
+      case (i, _) => i // return the prime number
     }
 
     if (iterator.hasNext) Some(iterator.next()) else None
   }
 
   private def markFactors(prime: Int, sieve: Array[Boolean]): Unit =
-    (prime until sieve.length by prime).foreach(i => sieve(i) = true)
+    (prime until sieve.length by prime * 2).foreach(i => sieve(i) = true) // factors of the prime are not prime
 }
