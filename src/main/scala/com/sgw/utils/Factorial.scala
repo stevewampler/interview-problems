@@ -1,4 +1,4 @@
-package com.sgw.problems
+package com.sgw.utils
 
 /**
  * Print the factorials for the numbers 0 through 10.

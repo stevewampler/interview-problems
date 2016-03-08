@@ -1,4 +1,4 @@
-package com.sgw.problems
+package com.sgw.utils
 
 object Combinations extends App {
   val values = List('A', 'B', 'C', 'D')

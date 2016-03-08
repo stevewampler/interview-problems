@@ -1,4 +1,4 @@
-package com.sgw.problems
+package com.sgw.utils
 
 import java.lang.Math._
 

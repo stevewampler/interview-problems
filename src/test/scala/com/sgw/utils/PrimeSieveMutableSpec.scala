@@ -1,6 +1,7 @@
-package com.sgw.problems
+package com.sgw.utils
 
-import org.scalatest.{BeforeAndAfter, Matchers, FlatSpec}
+import com.sgw.problems.PrimeSieveMutable
+import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers}
 
 class PrimeSieveMutableSpec extends FlatSpec with Matchers with BeforeAndAfter {
   "A PrimeSieveMutable" should "find all of the prime numbers between 2 and 100" in {

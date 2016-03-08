@@ -1,6 +1,6 @@
 package com.sgw.projecteuler
 
-import com.sgw.problems.PrimeSieve
+import com.sgw.utils.{Triangles, Factorization}
 
 /**
  * From: https://projecteuler.net/problem=12
@@ -27,64 +27,14 @@ import com.sgw.problems.PrimeSieve
  * Answer: 76,576,500
  */
 object P012HighlyDivisibleTriangularNumber extends App {
-  val targetFOXSize: Int = 500
+  def solve(targetFactorsSize: Int = 500): Long =
+    Triangles.generate.map(x => (x, Factorization.factors(x))).map {
+      case (x, factors) => (x, factors.size)
+    }.filter {
+      case (_, factorsSize) => factorsSize > targetFactorsSize
+    }.map {
+      case (x, _) => x
+    }.take(1).toList.head
 
-  val primes = PrimeSieve.primesList(150000).map(_.toLong).toArray
-
-  println(primes.size)
-
-  def primeFactors(x: Long, primeIndex: Int = 0): List[Long] = try {
-    val f1 = primes(primeIndex)
-
-    if (f1 >= x) return List[Long]()
-
-    if (x % f1 == 0) {
-      val f2 = x / f1
-
-      f1 :: f2 :: primeFactors(f2, primeIndex)
-    } else {
-      primeFactors(x, primeIndex + 1)
-    }
-  } catch {
-    case t: Throwable => throw new RuntimeException(s"Field to find the prime factors for $x.", t)
-  }
-
-  def factors(x: Long): List[Long] = {
-    val pfs = primeFactors(x).sorted
-
-    val pfs2 = pfs.takeWhile(_ <= Math.sqrt(x)) // only need factors <= sqrt(x)
-
-    val ofs = try {
-      (2 to pfs2.size).
-        map(i => pfs2.combinations(i).map(_.product).filter(_ < x).filter(x % _ == 0).toList).
-        takeWhile(_.nonEmpty).
-        flatten
-    } catch {
-      case t: Throwable => throw new RuntimeException(s"Failed to get the factors for $x. pfs=${pfs.mkString(",")}", t)
-    }
-
-    //    println(ofs.mkString(","))
-    (1L :: x :: pfs ++ ofs).distinct
-  }
-
-  def triangles: Iterator[Long] = new Iterator[Long] {
-    private var x = 0
-    private var sum = 0
-
-    def hasNext: Boolean = true
-
-    def next = {
-      x += 1
-      sum += x
-      sum
-    }
-  }
-
-  triangles.map(x => (x, factors(x))).map {
-    case (x, fox) => (x, fox, fox.size)
-  }.filter {
-    case (_, _, foxSize) => foxSize > targetFOXSize
-  }.map {
-    case (x, fox, foxSize) => (x, fox.sorted, foxSize)
-  }.take(1).foreach(println)
+  println(solve(500))
 }

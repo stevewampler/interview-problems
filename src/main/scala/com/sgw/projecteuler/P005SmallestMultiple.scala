@@ -1,6 +1,7 @@
 package com.sgw.projecteuler
 
-import com.sgw.problems.{PrimeSieve, PrimeSieveMutable}
+import com.sgw.problems.PrimeSieveMutable
+import com.sgw.utils.PrimeSieve
 
 /**
  * From: https://projecteuler.net/problem=5
