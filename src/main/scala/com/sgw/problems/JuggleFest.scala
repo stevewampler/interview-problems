@@ -101,18 +101,13 @@ object JuggleFest {
   case class Juggler(name: String, attrs: Vector[Int], matchScores: Seq[MatchScore]) {
     val matchScoresMap = matchScores.map(matchScore => (matchScore.circuit, matchScore)).toMap
 
-    def matchScore(circuit: Circuit): MatchScore = matchScoresMap(circuit)
+    def maybeMatchScore(circuit: Circuit): Option[MatchScore] = matchScoresMap.get(circuit)
+
+    def score(circuit: Circuit): Int = maybeMatchScore(circuit).map(_.score).getOrElse(0)
 
     def prefers(circuit: Circuit, prefLevel: Int): Boolean = matchScores.take(prefLevel).exists(ms => ms.circuit == circuit)
 
     override def toString = s"$name ${matchScores.mkString(" ")}"
-  }
-
-  /**
-   * Interface to a juggler assignment strategy.
-   */
-  trait JugglerAssignmentStrategy {
-    def apply(circuits: List[Circuit], jugglers: List[Juggler]): List[(Circuit, List[Juggler])]
   }
 
   /**
@@ -126,7 +121,7 @@ object JuggleFest {
    * @return a two tuple containing the new list of unassigned Jugglers and the a map containing
    *         the new mapping of circuits to assigned Jugglers.
    */
-  object SkillsAndPreferencesAssignmentStrategy extends JugglerAssignmentStrategy {
+  object AssignmentStrategy {
     /**
      * Adds Jugglers to the specified Circuit up to the specified number of jugglers-per-circuit.
      * Juggler's are assigned to a Circuit in the order of how well each Juggler's skills match the Circuit (i.e. by
@@ -154,7 +149,7 @@ object JuggleFest {
       // get the list of newly assigned Jugglers based on how well the Juggler's skills match the Circuit
       // and the Juggler's Circuit preferences
       val newlyAssignedJugglers = unassignedJugglers
-        .sortWith { case (j1, j2) => j1.matchScore(circuit).lt(j2.matchScore(circuit)) } // sort by match score for the current circuit
+        .sortWith { case (j1, j2) => j1.score(circuit) > (j2.score(circuit)) } // sort by match score for the current circuit
         .takeWhile(juggler => juggler.prefers(circuit, prefLevel)) // take the top jugglers that prefer to be in the circuit
         .take(jugglersPerCircuit - assignedJugglers.size)
 
@@ -190,13 +185,15 @@ object JuggleFest {
     def apply(circuits: List[Circuit], jugglers: List[Juggler]): List[(Circuit, List[Juggler])] = {
       val jugglersPerCircuit = jugglers.size / circuits.size
 
-      val (_, assignments) = (1 to circuits.size).foldLeft((jugglers, Map[Circuit, List[Juggler]]())) { // loop over the jugglers' preferred circuits
-        case ((unassignedJugglers, assignments2), prefLevel) => assignJugglers(circuits, prefLevel, jugglersPerCircuit, unassignedJugglers, assignments2)
+      val maxPreferenceLevel = jugglers.map(juggler => juggler.matchScores.length).max
+
+      val (_, assignments) = (1 to maxPreferenceLevel).foldLeft((jugglers, Map[Circuit, List[Juggler]]())) { // loop over the jugglers' preferred circuits
+        case ((unassignedJugglers, assignments2), preferenceLevel) => assignJugglers(circuits, preferenceLevel, jugglersPerCircuit, unassignedJugglers, assignments2)
       }
 
       assignments.map {
         case (circuit, assignedJugglers) => (circuit, assignedJugglers.sortWith {
-          case (j1, j2) => j1.matchScore(circuit).lt(j2.matchScore(circuit))
+          case (j1, j2) => j1.score(circuit) > (j2.score(circuit))
         })
       }
         .toList
@@ -251,5 +248,23 @@ object JuggleFest {
 
   def formatAssignments(assignments: Seq[(Circuit, Seq[Juggler])]): Seq[String] = assignments.map {
     case (circuit, assignedJugglers) => s"${circuit.name} ${assignedJugglers.mkString(", ")}"
+  }
+
+  def main(args: Array[String]) {
+    val in = if (args.isEmpty) {
+      scala.io.Source.stdin
+    } else {
+      scala.io.Source.fromFile(args(0))
+    }
+
+    val input = in.getLines().toList
+
+    val (circuits, jugglers) = parse(input)
+
+    val assignments = AssignmentStrategy(circuits.toList, jugglers.toList)
+
+    val output = formatAssignments(assignments)
+
+    output.foreach(println)
   }
 }

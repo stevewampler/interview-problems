@@ -31,13 +31,17 @@ class JuggleFestSpec extends FlatSpec with Matchers {
 
     val (circuits, jugglers) = JuggleFest.parse(input)
 
-    val assignments = JuggleFest.SkillsAndPreferencesAssignmentStrategy(circuits.toList, jugglers.toList)
+    val assignments = JuggleFest.AssignmentStrategy(circuits.toList, jugglers.toList)
 
     val actualOutput = JuggleFest.formatAssignments(assignments)
 
-    actualOutput.foreach(println)
-
     actualOutput.size should be (expectedOutput.size)
+
+//    println("Expected:")
+//    expectedOutput.foreach(println)
+//
+//    println("Actual:")
+    actualOutput.foreach(println)
 
     expectedOutput.zip(actualOutput).foreach {
       case (expected, actual) => actual should be (expected)
