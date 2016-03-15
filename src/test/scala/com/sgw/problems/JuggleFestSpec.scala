@@ -1,6 +1,7 @@
 package com.sgw.problems
 
 import org.scalatest.{Matchers, FlatSpec}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class JuggleFestSpec extends FlatSpec with Matchers {
   "A JuggleFest" should "properly assign jugglers to circuits" in {
@@ -34,19 +35,19 @@ class JuggleFestSpec extends FlatSpec with Matchers {
 
     val (circuits, jugglers) = JuggleFest.parse(input)
 
-    val (remainingJugglers, circuitAssignments) = JuggleFest.assignJugglers(circuits, jugglers)
+    val fut = JuggleFest.assign(jugglers)
 
-    remainingJugglers.size should be(0)
+    fut.map(_ => {
+      val actualOutput = JuggleFest.formatAssignments(circuits)
 
-    val actualOutput = JuggleFest.formatAssignments(circuitAssignments)
+      println("Actual:")
+      actualOutput.foreach(println)
 
-    println("Actual:")
-    actualOutput.foreach(println)
+      actualOutput.size should be (expectedOutput.size)
 
-    actualOutput.size should be (expectedOutput.size)
-
-    expectedOutput.zip(actualOutput).foreach {
-      case (expected, actual) => actual should be (expected)
-    }
+      expectedOutput.zip(actualOutput).foreach {
+        case (expected, actual) => actual should be (expected)
+      }
+    }).recover { case ex => fail(ex) }
   }
 }
