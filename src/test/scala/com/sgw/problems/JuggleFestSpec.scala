@@ -1,7 +1,11 @@
 package com.sgw.problems
 
+import java.util.concurrent.TimeUnit
+
 import org.scalatest.{Matchers, FlatSpec}
+import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.Duration
 
 class JuggleFestSpec extends FlatSpec with Matchers {
   "A JuggleFest" should "properly assign jugglers to circuits" in {
@@ -35,9 +39,7 @@ class JuggleFestSpec extends FlatSpec with Matchers {
 
     val (circuits, jugglers) = JuggleFest.parse(input)
 
-    val fut = JuggleFest.assign(jugglers)
-
-    fut.map(_ => {
+    val fut = JuggleFest.assign(jugglers).map(_ => {
       val actualOutput = JuggleFest.formatAssignments(circuits)
 
       println("Actual:")
@@ -45,9 +47,9 @@ class JuggleFestSpec extends FlatSpec with Matchers {
 
       actualOutput.size should be (expectedOutput.size)
 
-      expectedOutput.zip(actualOutput).foreach {
-        case (expected, actual) => actual should be (expected)
-      }
+      actualOutput should be (expectedOutput)
     }).recover { case ex => fail(ex) }
+
+    Await.result(fut, Duration(5, TimeUnit.SECONDS))
   }
 }

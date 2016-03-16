@@ -75,6 +75,15 @@ object JuggleFest {
 
   private def dot(a: Vector[Int], b: Vector[Int]): Int = a.zip(b).map { case (ax, bx) => ax * bx }.sum
 
+  /**
+   * A Juggler whose primary job is to find the circuit that's the best fit for the juggler's skills and circuit
+   * preferences.
+   *
+   * @param name the juggler's name
+   * @param attrs the juggler's coordination (H), endurance (E), and pizzazz (P) attributes
+   * @param preferredCircuits the juggler's preferred circuits
+   * @param circuits all of the circuits
+   */
   case class Juggler(
     name: String,
     attrs: Vector[Int],
@@ -84,6 +93,9 @@ object JuggleFest {
     private val preferredCircuitIterator = preferredCircuits.toIterator
     private val circuitIterator = circuits.toIterator
 
+    /**
+     * Returns the next preferred circuit, or of none of those are left, one of the other circuits.
+     */
     private def nextCircuit: Circuit = synchronized {
       if (preferredCircuitIterator.hasNext) {
         preferredCircuitIterator.next()
@@ -94,13 +106,35 @@ object JuggleFest {
       }
     }
 
+    /**
+     * Assigns this juggler to the next preferred circuit.
+     *
+     * @return a Future[Unit] that wraps the assignment in a separate thread (to make things run in parallel and prevent
+     *         stack overflows)
+     */
     def assignToNextCircuit: Future[Unit] = Future { nextCircuit.assign(this) }
 
     override def toString = s"""$name ${preferredCircuits.map(circuit => s"""${circuit.name}:${circuit.score(this)}""").mkString(" ")}"""
   }
 
+  /**
+   * A juggling circuit whose responsibilities are to:
+   * <ul>
+   *   <li>score a juggler's skills against this circuit's attributes,</li>
+   *   <li>maintain a sorted and bounded list of jugglers by score, and</li>
+   *   <li>tell jugglers that don't make the cut to find another circuit.</li>
+   * </ul>
+   *
+   * @param name this circuit's name
+   * @param attrs the circuit's coordination (H), endurance (E), and pizzazz (P) attributes
+   * @param numJugglersPerCircuit the number of jugglers allowed in this circuit
+   */
   case class Circuit(name: String, attrs: Vector[Int], numJugglersPerCircuit: Int) {
-    implicit object JugglerOrdering extends Ordering[Juggler] {
+
+    private implicit object JugglerOrdering extends Ordering[Juggler] {
+      /**
+       * Order's jugglers ascending by score. If two juggler's have the same score, then they are ordered by name.
+       */
       def compare(j1: Juggler, j2: Juggler): Int = {
         val s1 = score(j1)
         val s2 = score(j2)
@@ -115,18 +149,37 @@ object JuggleFest {
       }
     }
 
-    var jugglers = SortedSet[Juggler]()
+    private var _jugglers = SortedSet[Juggler]()
 
+    /**
+     * Returns a copy of this Circuit's juggler's list in priority (highest score first) order.
+     */
+    def jugglers: List[Juggler] = synchronized { _jugglers.toList.reverse }
+
+    /**
+     * Scores a juggler based on how good a fit the juggler's attributes (skills) are compared to this circuit's
+     * attributes.
+     *
+     * @param juggler the juggler
+     *
+     * @return the juggler's score relative to this circuit
+     */
     def score(juggler: Juggler): Int = dot(attrs, juggler.attrs)
 
+    /**
+     * Assigns the specified juggler to this circuit. If the addition of the new juggler causes the circuit to have
+     * too many jugglers, the juggler with the lowest score is asked to find another circuit.
+     *
+     * @param juggler the juggler to be assigned to this circuit
+     */
     def assign(juggler: Juggler): Unit = synchronized {
-      jugglers = jugglers + juggler // add the juggler ot this circuit (sorted)
+      _jugglers = _jugglers + juggler // add the juggler ot this circuit (sorted)
 
       // if this circuit has too many jugglers ...
-      if (jugglers.size > numJugglersPerCircuit) {
-        val rejectedJuggler = jugglers.head // get the juggler with the lowest score
+      if (_jugglers.size > numJugglersPerCircuit) {
+        val rejectedJuggler = _jugglers.head // get the juggler with the lowest score
 
-        jugglers = jugglers.drop(1) // and drop'm from this circuit
+        _jugglers = _jugglers.drop(1) // and drop'm from this circuit
 
         rejectedJuggler.assignToNextCircuit // tell the rejected juggler to find another circuit
       }
@@ -135,8 +188,18 @@ object JuggleFest {
     override def toString = s"""${name} ${jugglers.map(_.toString).mkString(", ")}"""
   }
 
+  /**
+   * Parses a input source of records into a list of circuits and jugglers.
+   *
+   * @param source the input source
+   */
   def parse(source: Source): (List[Circuit], List[Juggler]) = parse(source.getLines().toList)
 
+  /**
+   * Parses a list of input records (strings) into a list of circuits and jugglers.
+   *
+   * @param recs input records
+   */
   def parse(recs: List[String]): (List[Circuit], List[Juggler]) = {
     val (circuitRecs, jugglerRecs) = recs
       .map(rec => rec.trim)
@@ -168,6 +231,13 @@ object JuggleFest {
     (circuits, jugglers)
   }
 
+  /**
+   * Check the juggling circuits to make sure they all contain the correct number of jugglers and that all of the
+   * jugglers are in one and only one circuit.
+   *
+   * @param circuits the list of circuits with jugglers assigned to them
+   * @param jugglers the list of jugglers
+   */
   def checkCircuits(circuits: List[Circuit], jugglers: List[Juggler]): Unit = {
     val numJugglersPerCircuit = jugglers.size / circuits.size
 
@@ -182,8 +252,20 @@ object JuggleFest {
     assert(jugglerSet.size == jugglers.size)
   }
 
+  /**
+   * Transforms the circuits, and their assigned jugglers, into a list of output strings.
+   *
+   * @param circuits the list of circuits with jugglers assigned to them
+   */
   def formatAssignments(circuits: List[Circuit]): List[String] = circuits.map(circuit => circuit.toString)
 
+  /**
+   * Assigns all of the jugglers to circuits.
+   *
+   * @param jugglers the list of jugglers
+   *
+   * @return a Future that, when complete, indicates that all of the jugglers have been assigned.
+   */
   def assign(jugglers: List[Juggler]): Future[List[Unit]] = Future.sequence(jugglers.map(juggler => juggler.assignToNextCircuit))
 
   def main(args: Array[String]) {
