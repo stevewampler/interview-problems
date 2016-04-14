@@ -109,8 +109,7 @@ object JuggleFest {
     /**
      * Assigns this juggler to the next preferred circuit.
      *
-     * @return a Future[Unit] that wraps the assignment in a separate thread (to make things run in parallel and prevent
-     *         stack overflows)
+     * @return a Future[Unit] that wraps the assignment in a separate thread
      */
     def assignToNextCircuit: Future[Unit] = Future { nextCircuit.assign(this) }
 
@@ -122,7 +121,7 @@ object JuggleFest {
    * <ul>
    *   <li>score a juggler's skills against this circuit's attributes,</li>
    *   <li>maintain a sorted and bounded list of jugglers by score, and</li>
-   *   <li>tell jugglers that don't make the cut to find another circuit.</li>
+   *   <li>tell jugglers when they need to shift to another circuit.</li>
    * </ul>
    *
    * @param name this circuit's name
@@ -173,7 +172,7 @@ object JuggleFest {
      * @param juggler the juggler to be assigned to this circuit
      */
     def assign(juggler: Juggler): Unit = synchronized {
-      _jugglers = _jugglers + juggler // add the juggler ot this circuit (sorted)
+      _jugglers = _jugglers + juggler // add the juggler to this circuit (sorted)
 
       // if this circuit has too many jugglers ...
       if (_jugglers.size > numJugglersPerCircuit) {
@@ -185,11 +184,11 @@ object JuggleFest {
       }
     }
 
-    override def toString = s"""${name} ${jugglers.map(_.toString).mkString(", ")}"""
+    override def toString = s"""$name ${jugglers.map(_.toString).mkString(", ")}"""
   }
 
   /**
-   * Parses a input source of records into a list of circuits and jugglers.
+   * Parses the specified source into a list of circuits and jugglers.
    *
    * @param source the input source
    */
