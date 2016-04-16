@@ -39,17 +39,15 @@ class JuggleFestSpec extends FlatSpec with Matchers {
 
     val (circuits, jugglers) = JuggleFest.parse(input)
 
-    val fut = JuggleFest.assign(jugglers).map(_ => {
-      val actualOutput = JuggleFest.formatAssignments(circuits)
+    JuggleFest.assign(jugglers)
 
-      println("Actual:")
-      actualOutput.foreach(println)
+    val actualOutput = JuggleFest.formatAssignments(circuits)
 
-      actualOutput.size should be (expectedOutput.size)
+    println("Actual:")
+    actualOutput.foreach(println)
 
-      actualOutput should be (expectedOutput)
-    }).recover { case ex => fail(ex) }
+    actualOutput.size should be (expectedOutput.size)
 
-    Await.result(fut, Duration(5, TimeUnit.SECONDS))
+    actualOutput should be (expectedOutput)
   }
 }
