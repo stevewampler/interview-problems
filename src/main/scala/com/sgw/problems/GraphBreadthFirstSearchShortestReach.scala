@@ -79,28 +79,28 @@ import scala.io.Source
   */
 object GraphBreadthFirstSearchShortestReach {
 
-//  def main(args: Array[String]) {
-//    val numProb = readLine().trim.toInt
-//    // println(s"numProbl $numProb")
-//    val results = (0 until numProb).toIterator.map(_ => {
-//      // println("reading n & m")
-//      readLine().trim
-//    }).map(_.split(" ").toList).map(arr => (arr(0).toInt, arr(1).toInt)).map {
-//      case (n, m) => {
-//        val nodes = (1 to n).toList
-//        // println("reading edges")
-//        val edges = (1 to m).toIterator.map(_ => readLine().trim).map(_.split(" ").toList).map(arr => (arr(0).toInt, arr(1).toInt)).toList
-//        // println(s"edges = $edges")
-//        // println("reading s")
-//        val s = readLine().trim.toInt
-//        // println(s"s=$s")
-//
-//        solve(nodes, edges, s)
-//      }
-//    }.toList
-//
-//    println(results.mkString("\n"))
-//  }
+  def main(args: Array[String]) {
+    val numProb = readLine().trim.toInt
+    // println(s"numProbl $numProb")
+    val results = (0 until numProb).toIterator.map(_ => {
+      // println("reading n & m")
+      readLine().trim
+    }).map(_.split(" ").toList).map(arr => (arr(0).toInt, arr(1).toInt)).map {
+      case (n, m) => {
+        val nodes = (1 to n).toList
+        // println("reading edges")
+        val edges = (1 to m).toIterator.map(_ => readLine().trim).map(_.split(" ").toList).map(arr => (arr(0).toInt, arr(1).toInt)).toList
+        // println(s"edges = $edges")
+        // println("reading s")
+        val s = readLine().trim.toInt
+        // println(s"s=$s")
+
+        solve(nodes, edges, s)
+      }
+    }.toList
+
+    println(results.mkString("\n"))
+  }
 
   def solve(resourceURL: String): List[List[Int]] =
     solve(Source.fromInputStream(getClass.getResourceAsStream(resourceURL)).getLines().toList)
@@ -127,27 +127,25 @@ object GraphBreadthFirstSearchShortestReach {
 
   def solve(ns: List[Int], es: List[(Int, Int)], s: Int): List[Int] = {
     @tailrec
-    def go(acc: Map[Node, Int], queue: Queue[(Node, Int)], enqueued: Set[Node]): Map[Node, Int] = {
+    def go(acc: Map[Node, Int], queue: Queue[(Node, Int)]): Map[Node, Int] = {
       if (queue.isEmpty) return acc
 
       val ((node, dist), queue2) = queue.dequeue
 
-      val (newQueue, newEnqueued) = node.ns.filter(node => !enqueued.contains(node)).foldLeft((queue2, enqueued)) {
-        case ((queue, enqueued), node) => {
-          (queue.enqueue((node, dist + 6)), enqueued + node)
+      val (newQueue, newAcc) = node.ns.filter(node => !acc.contains(node)).foldLeft((queue2, acc)) {
+        case ((queue, acc), node) => {
+          (queue.enqueue((node, dist + 6)), acc.updated(node, dist + 6))
         }
       }
 
-      val newAcc = acc.updated(node, dist)
-
-      go(newAcc, newQueue, newEnqueued)
+      go(newAcc, newQueue)
     }
 
     val nodes = createNodes(ns, es)
 
     val startNode = nodes(s - 1)
 
-    val acc = go(Map[Node, Int](startNode -> 0), Queue[(Node, Int)]((startNode, 0)), Set(startNode))
+    val acc = go(Map[Node, Int](startNode -> 0), Queue[(Node, Int)]((startNode, 0)))
 
     nodes.map(node => acc.getOrElse(node, -1)).filter(_ != 0)
   }
