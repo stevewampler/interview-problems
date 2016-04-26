@@ -1,7 +1,5 @@
 package com.sgw.problems
 
-import scala.annotation.tailrec
-
 /**
  * Given n queens on an n x n chess board, print out of the possible positions of all n queues such that no two
  * queens can check each other.
@@ -11,11 +9,11 @@ object EightQueens {
     val newSolutions = q match {
       case (qx, _) if qx >= n => return solution :: solutions // found a new solution, add it to the list
       case (_, qy) if qy >= n => return solutions // dead end
-      case (qx, _) if isNotInCheck(q, solution) => go(n, (qx + 1, 0), q :: solution, solutions) // not in check, so add it
+      case (qx, _) if isNotInCheck(q, solution) => go(n, (qx + 1, 0), q :: solution, solutions) // not in check, so add the queue to the solution and iterate to add another queue in the next column
       case _ => solutions // queen is in check, so this branch is not a solution
     }
 
-    // go to the next row
+    // move the current (in check) queen to the next row
     go(n, (q._1, q._2 + 1), solution, newSolutions)
   }
 

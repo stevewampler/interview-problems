@@ -125,29 +125,36 @@ object GraphBreadthFirstSearchShortestReach {
     }.toList
   }
 
+  // O(n + m + n^2) => O(n^2)
   def solve(ns: List[Int], es: List[(Int, Int)], s: Int): List[Int] = {
+    // O(n^2) for fully connected graphs, O(1) for a fully disconnected graph
     @tailrec
     def go(acc: Map[Node, Int], queue: Queue[(Node, Int)]): Map[Node, Int] = {
-      if (queue.isEmpty) return acc
+      if (queue.isEmpty) return acc // O(1)
 
-      val ((node, dist), queue2) = queue.dequeue
+      val ((node, dist), queue2) = queue.dequeue // O(1) http://docs.scala-lang.org/overviews/collections/performance-characteristics.html
 
-      val (newQueue, newAcc) = node.ns.filter(node => !acc.contains(node)).foldLeft((queue2, acc)) {
-        case ((queue, acc), node) => {
-          (queue.enqueue((node, dist + 6)), acc.updated(node, dist + 6))
+      val (newQueue, newAcc) = node.ns. // O(n)
+        filter(node => !acc.contains(node)). // O(1)
+        foldLeft((queue2, acc)) {
+          case ((queue, acc), node) => {
+            (
+              queue.enqueue((node, dist + 6)), // O(1) appends are O(1)
+              acc.updated(node, dist + 6) // O(1)
+            )
+          }
         }
-      }
 
       go(newAcc, newQueue)
     }
 
-    val nodes = createNodes(ns, es)
+    val nodes = createNodes(ns, es) // O(n + m)
 
-    val startNode = nodes(s - 1)
+    val startNode = nodes(s - 1) // O(1)
 
-    val acc = go(Map[Node, Int](startNode -> 0), Queue[(Node, Int)]((startNode, 0)))
+    val acc = go(Map[Node, Int](startNode -> 0), Queue[(Node, Int)]((startNode, 0))) // O(m)
 
-    nodes.map(node => acc.getOrElse(node, -1)).filter(_ != 0)
+    nodes.map(node => acc.getOrElse(node, -1)).filter(_ != 0) // O(n)
   }
 
   class Node(val i: Int, var ns: Set[Node] = Set()) {
@@ -156,13 +163,14 @@ object GraphBreadthFirstSearchShortestReach {
     override def toString: String = s"Node: $i  ${ns.map(n => n.i).mkString(",")}"
   }
 
+  // O(n + m)
   def createNodes(ns: List[Int], es: List[(Int, Int)]): List[Node] = {
-    val nodes = ns.map(i => new Node(i))
+    val nodes = ns.map(i => new Node(i)) // O(n)
 
-    es.foreach {
+    es.foreach { // O(m)
       case (n1, n2) => {
-        nodes(n1 - 1).add(nodes(n2 - 1))
-        nodes(n2 - 1).add(nodes(n1 - 1))
+        nodes(n1 - 1).add(nodes(n2 - 1)) // O(1)
+        nodes(n2 - 1).add(nodes(n1 - 1)) // O(1)
       }
     }
 

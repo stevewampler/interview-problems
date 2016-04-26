@@ -5,7 +5,7 @@ package com.sgw.problems
  * subsequent strings contain two space-separated integers. Count the number integers in between the two specified
  * integers (inclusive on both ends) that are the square of some other integer.
  * 
- * For example, this inptut:
+ * For example, this input:
  * 
  * 2
  * 3 9
