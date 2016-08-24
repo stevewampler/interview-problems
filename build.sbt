@@ -17,7 +17,8 @@ libraryDependencies ++= Seq(
   "com.twitter" %% "algebird-core" % "0.9.0",
   "org.scalaz"  %% "scalaz-core" % "latest.release",
   "org.scalaz"  %% "scalaz-concurrent" % "latest.release",
-  "org.scalaz.stream" %% "scalaz-stream" % "0.7a"
+  "org.scalaz.stream" %% "scalaz-stream" % "0.7a",
+  "junit" % "junit" % "4.10" % "test"
 )
 
 resolvers ++= Seq(
