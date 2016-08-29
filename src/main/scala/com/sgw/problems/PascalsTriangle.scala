@@ -16,9 +16,10 @@ object PascalsTriangle {
     *   col 3, row 4 => 4
     *   col 4, row 4 => 1
     *
-    * @param c
-    * @param r
-    * @return
+    * @param c the triangle's column index (zero based)
+    * @param r the triangle's row index (zero based)
+    *
+    * @return the computed value of the triangle at the specified row and column.
     */
   def pascal(c: Int, r: Int): Int = {
     def go(c: Int, r: Int): Int =
