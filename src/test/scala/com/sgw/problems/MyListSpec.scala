@@ -32,4 +32,11 @@ class MyListSpec extends FlatSpec with Matchers {
   "A list" should "be able to be created using varargs" in {
     MyList(1, 2, 3) should be (MyList(1, MyList(2, MyList(3))))
   }
+
+  "A list" should "be able to be sorted" in {
+    val list = MyList(5, 2, 1, 6, 8, 10, 50, 24, 20, 19, 3)
+    println(list)
+    val sorted = list.sort((x, y) => x < y)
+    println(sorted)
+  }
 }
