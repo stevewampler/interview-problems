@@ -51,11 +51,11 @@ trait MyList[+T] {
 
   def splitAt(n: Int): (MyList[T], MyList[T])
 
-  def insertionSort[E >: T](implicit lt: (E, T) => Boolean): MyList[E]
+  def insertionSort[E >: T](implicit ord: Ordering[E]): MyList[E]
 
-  def insertSorted[E >: T](x: E)(implicit lt: (E, T) => Boolean): MyList[E]
+  def insertSorted[E >: T](x: E)(implicit ord: Ordering[E]): MyList[E]
 
-  def mergeSort(lt: (T, T) => Boolean): MyList[T]
+  def mergeSort[E >: T](implicit ord: Ordering[E]): MyList[E]
 }
 
 object MyNil extends MyList[Nothing] {
@@ -83,11 +83,11 @@ object MyNil extends MyList[Nothing] {
 
   def apply(i: Int): Nothing = throw new IndexOutOfBoundsException
 
-  def insertionSort[E >: Nothing](implicit lt: (E, Nothing) => Boolean): MyList[E] = MyNil
+  def insertionSort[E >: Nothing](implicit ord: Ordering[E]): MyList[E] = MyNil
 
-  def insertSorted[E >: Nothing](x: E)(implicit lt: (E, Nothing) => Boolean): MyList[E] = x :: MyNil
+  def insertSorted[E >: Nothing](x: E)(implicit ord: Ordering[E]): MyList[E] = x :: MyNil
 
-  def mergeSort(lt: (Nothing, Nothing) => Boolean): MyList[Nothing] = MyNil
+  def mergeSort[E >: Nothing](implicit ord: Ordering[E]): MyList[E] = MyNil
 
   override def toString = ""
 }
@@ -138,26 +138,26 @@ case class MyCons[+T](head: T, tail: MyList[T] = MyNil) extends MyList[T] {
   def apply(i: Int): T = if (i == 0) head else tail.apply(i - 1)
 
   // complexity is N * N because, in the worst case, we have to visit all N values and then insert all N values
-  def insertionSort[E >: T](implicit lt: (E, T) => Boolean): MyList[E] = tail.insertionSort.insertSorted(head)
+  def insertionSort[E >: T](implicit ord: Ordering[E]): MyList[E] = tail.insertionSort(ord).insertSorted(head)
 
   def splitAt(n: Int): (MyList[T], MyList[T]) = (take(n), drop(n))
 
-  def insertSorted[E >: T](x: E)(implicit lt: (E, T) => Boolean): MyList[E] = if (x == head || lt(x, head)) {
+  def insertSorted[E >: T](x: E)(implicit ord: Ordering[E]): MyList[E] = if (x == head || ord.lt(x, head)) {
     x :: this
   } else {
     head :: tail.insertSorted(x)
   }
 
-  def mergeSort(lt: (T, T) => Boolean): MyList[T] = {
+  def mergeSort[E >: T](implicit ord: Ordering[E]): MyList[E] = {
     val n = length / 2
 
     if (n == 0)
       this
     else {
-      def merge(left: MyList[T], right: MyList[T]): MyList[T] = (left, right) match {
+      def merge(left: MyList[E], right: MyList[E]): MyList[E] = (left, right) match {
         case (_, MyNil) => left
         case (MyNil, _) => right
-        case (MyCons(leftHead, leftTail), MyCons(rightHead, rightTail)) => if (lt(leftHead, rightHead)) {
+        case (MyCons(leftHead, leftTail), MyCons(rightHead, rightTail)) => if (ord.lt(leftHead, rightHead)) {
           leftHead :: merge(leftTail, right)
         } else {
           rightHead :: merge(left, rightTail)
@@ -166,7 +166,7 @@ case class MyCons[+T](head: T, tail: MyList[T] = MyNil) extends MyList[T] {
 
       val (left, right) = splitAt(n)
 
-      merge(left.mergeSort(lt), right.mergeSort(lt))
+      merge(left.mergeSort(ord), right.mergeSort(ord))
     }
   }
 

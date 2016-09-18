@@ -91,12 +91,12 @@ class MyListSpec extends FlatSpec with Matchers {
   "A list" should "be able to be sorted using an insertion sort" in {
     val list = MyList(5, 2, 1, 6, 8, 10, 50, 24, 20, 19, 3)
 
-    list.insertionSort((x, y) => x < y) should be (MyList(1,2,3,5,6,8,10,19,20,24,50))
+    list.insertionSort should be (MyList(1,2,3,5,6,8,10,19,20,24,50))
   }
 
   "A list" should "be able to be sorted using a merge sort" in {
     val list = MyList(5, 2, 1, 6, 8, 10, 50, 24, 20, 19, 3)
 
-    list.mergeSort((x, y) => x < y) should be (MyList(1,2,3,5,6,8,10,19,20,24,50))
+    list.mergeSort should be (MyList(1,2,3,5,6,8,10,19,20,24,50))
   }
 }
