@@ -1,6 +1,7 @@
 package com.sgw.problems
 
 import math.Ordering
+import scala.annotation.tailrec
 
 object MyList {
   def apply[T](): MyList[T] = MyNil
@@ -39,7 +40,27 @@ trait MyList[+T] {
 
   def apply(i: Int): T
 
+  def map[B](f: T => B): MyList[B]
+
+  def filter(p: T => Boolean): MyList[T]
+
+  def filterNot(p: T => Boolean): MyList[T]
+
+  def partition(p: T => Boolean): (MyList[T], MyList[T])
+
+  def takeWhile(p: T => Boolean): MyList[T]
+
+  def dropWhile(p: T => Boolean): MyList[T]
+
+  def span(p: T => Boolean): (MyList[T], MyList[T])
+
+  def pack: MyList[MyList[T]]
+
+  def encode: MyList[(T, Int)] = pack.map(list => (list.head, list.length))
+
   def foldLeft[B](z: B)(f: (B, T) => B): B
+
+  def foldRight[B](z: B)(f: (T, B) => B): B
 
   def reverse: MyList[T] = foldLeft[MyList[T]](MyNil) {
     case (acc, x) => MyCons(x, acc)
@@ -68,16 +89,34 @@ object MyNil extends MyList[Nothing] {
 
   def concat[B >: Nothing](ys: MyList[B]): MyList[B] = ys
 
-  def take(n: Int): MyList[Nothing] = this
-  def drop(n: Int): MyList[Nothing] = this
+  def take(n: Int): MyList[Nothing] = MyNil
+  def drop(n: Int): MyList[Nothing] = MyNil
 
   def length: Int = 0
 
   def removeAt(n: Int): MyList[Nothing] = MyNil
 
-  def flatten: MyList[Nothing] = this
+  def flatten: MyList[Nothing] = MyNil
+
+  def map[B](f: Nothing => B): MyList[B] = MyNil
+
+  def filter(p: Nothing => Boolean): MyList[Nothing] = MyNil
+
+  def filterNot(p: Nothing => Boolean): MyList[Nothing] = MyNil
+
+  def partition(p: Nothing => Boolean): (MyList[Nothing], MyList[Nothing]) = (MyNil, MyNil)
+
+  def takeWhile(p: Nothing => Boolean): MyList[Nothing] = MyNil
+
+  def dropWhile(p: Nothing => Boolean): MyList[Nothing] = MyNil
+
+  def span(p: Nothing => Boolean): (MyList[Nothing], MyList[Nothing]) = (MyNil, MyNil)
+
+  def pack: MyList[MyList[Nothing]] = MyNil
 
   def foldLeft[B](z: B)(f: (B, Nothing) => B): B = z
+
+  def foldRight[B](z: B)(f: (Nothing, B) => B): B = z
 
   def splitAt(n: Int): (MyList[Nothing], MyList[Nothing]) = (MyNil, MyNil)
 
@@ -131,9 +170,59 @@ case class MyCons[+T](head: T, tail: MyList[T] = MyNil) extends MyList[T] {
     else
       MyCons(head, tail.removeAt(n - 1))
 
-  def length: Int = 1 + tail.length
+  def length: Int = // 1 + tail.length
+    foldRight(0) {
+      case (x, acc) => acc + 1
+    }
+
+  def map[B](f: T => B): MyList[B] = // f(head) :: tail.map(f)
+    foldRight(MyList[B]()) {
+      case (x, acc) => f(x) :: acc
+    }
+
+  def filter(p: T => Boolean): MyList[T] = if (p(head)) {
+    head :: tail.filter(p)
+  } else {
+    tail.filter(p)
+  }
+
+  def filterNot(p: T => Boolean): MyList[T] = if (p(head)) {
+    tail.filterNot(p)
+  } else {
+    head :: tail.filterNot(p)
+  }
+
+  def partition(p: T => Boolean): (MyList[T], MyList[T]) = (filter(p), filterNot(p))
+//    foldLeft((MyList[T](), MyList[T]())) {
+//      case ((left, right), x) => if (p(x)) {
+//        (x :: left, right)
+//      } else {
+//        (left, x :: right)
+//      }
+//    }
+
+  def takeWhile(p: T => Boolean): MyList[T] =
+    if (p(head)) {
+      head :: tail.takeWhile(p)
+    } else {
+      MyNil
+    }
+
+  def dropWhile(p: T => Boolean): MyList[T] =
+    if (p(head)) {
+      tail.dropWhile(p)
+    } else {
+      this
+    }
+
+  def span(p: T => Boolean): (MyList[T], MyList[T]) = (takeWhile(p), dropWhile(p))
+
+  def pack: MyList[MyList[T]] =
+    takeWhile(x => x == head) :: dropWhile(x => x == head).pack
 
   def foldLeft[B](z: B)(f: (B, T) => B): B = tail.foldLeft(f(z, head))(f)
+
+  def foldRight[B](z: B)(f: (T, B) => B): B = f(head, tail.foldRight(z)(f))
 
   def apply(i: Int): T = if (i == 0) head else tail.apply(i - 1)
 
