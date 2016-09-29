@@ -1,4 +1,4 @@
-package com.sgw.problems
+package com.sgw.coursera
 
 /**
   * A "fixed point" of a function is the value x such that f(x) = x.

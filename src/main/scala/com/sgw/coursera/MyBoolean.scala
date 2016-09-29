@@ -1,4 +1,4 @@
-package com.sgw.problems
+package com.sgw.coursera
 
 /**
   * Can all of the Scala primitive types be implemented as objects without resorting to the scala or java primitive types?

@@ -1,13 +1,12 @@
-package com.sgw.problems
-
-import org.scalatest.FunSuite
+package com.sgw.coursera
 
 import org.junit.runner.RunWith
+import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class PascalTriangleSuite extends FunSuite {
-  import com.sgw.problems.PascalsTriangle.pascal
+  import PascalsTriangle.pascal
 
   test("pascal: col=0,row=2") {
     assert(pascal(0, 2) === 1)

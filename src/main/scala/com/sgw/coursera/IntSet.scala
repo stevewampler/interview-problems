@@ -1,4 +1,4 @@
-package com.sgw.problems
+package com.sgw.coursera
 
 /**
   * Created by swampler on 8/31/16.

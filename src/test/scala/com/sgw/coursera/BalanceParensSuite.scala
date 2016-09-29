@@ -1,4 +1,4 @@
-package com.sgw.problems
+package com.sgw.coursera
 
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite

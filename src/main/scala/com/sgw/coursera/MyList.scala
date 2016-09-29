@@ -1,7 +1,6 @@
-package com.sgw.problems
+package com.sgw.coursera
 
-import math.Ordering
-import scala.annotation.tailrec
+import scala.math.Ordering
 
 object MyList {
   def apply[T](): MyList[T] = MyNil

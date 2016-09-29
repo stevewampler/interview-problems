@@ -1,9 +1,9 @@
-package com.sgw.problems
+package com.sgw.coursera
 
 /**
   * Write a set of classes that can be used to evaluate an integer expression.
   *
-  * Derived from the Coursera Programming Principles in Scala course.
+  * Derived from the Coursera "Functional Programming Principles in Scala" course.
   *
   * See also the "Expression Problem":
   *   https://en.wikipedia.org/wiki/Expression_problem

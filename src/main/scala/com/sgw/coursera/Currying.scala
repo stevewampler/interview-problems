@@ -1,4 +1,4 @@
-package com.sgw.problems
+package com.sgw.coursera
 
 /**
   * 0) Write a sum function that calculates the sum of the values of a function for the points on a given interval.

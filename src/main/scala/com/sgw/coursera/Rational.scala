@@ -1,4 +1,6 @@
-package com.sgw.problems
+package com.sgw.coursera
+
+import com.sgw.problems.GreatestCommonDenominator
 
 object Rational {
   def apply(numer: Int, denom: Int = 1): Rational = {
