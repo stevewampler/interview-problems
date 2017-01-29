@@ -18,7 +18,8 @@ libraryDependencies ++= Seq(
   "org.scalaz"  %% "scalaz-core" % "latest.release",
   "org.scalaz"  %% "scalaz-concurrent" % "latest.release",
   "org.scalaz.stream" %% "scalaz-stream" % "0.7a",
-  "junit" % "junit" % "4.10" % "test"
+  "junit" % "junit" % "4.10" % "test",
+  "org.scala-lang" % "scala-parser-combinators" % "2.11.0-M4"
 )
 
 resolvers ++= Seq(

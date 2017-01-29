@@ -19,7 +19,7 @@ class TaskSpec extends Specification {
     "run without an error on a separate thread" in Result.unit {
       val task = Task { Thread.currentThread() }
 
-      val result = task.attemptRun
+      val result = task.unsafePerformSyncAttempt
 
       result.isRight must beTrue
 
@@ -31,7 +31,7 @@ class TaskSpec extends Specification {
     "fail" in Result.unit {
       val task = Task { throw new RuntimeException("Fail!") }
 
-      task.attemptRun.isLeft must beTrue
+      task.unsafePerformSyncAttempt.isLeft must beTrue
     }
   }
 
@@ -44,7 +44,7 @@ class TaskSpec extends Specification {
         r4 <- Task(r3 + "D")
       } yield r4
 
-      val result = chainOfTasks.attemptRun
+      val result = chainOfTasks.unsafePerformSyncAttempt
 
       result.isRight must beTrue
 
@@ -70,7 +70,7 @@ class TaskSpec extends Specification {
         }
       } yield t4
 
-      val result = chain.attemptRun
+      val result = chain.unsafePerformSyncAttempt
 
       result.isRight must beTrue
 
@@ -86,7 +86,7 @@ class TaskSpec extends Specification {
         (task, _) => task.flatMap(list => Task(Thread.currentThread.getName :: list))
       }
 
-      val result = chain.attemptRun
+      val result = chain.unsafePerformSyncAttempt
 
       result.isRight must beTrue
 
@@ -107,7 +107,7 @@ class TaskSpec extends Specification {
         r4 <- Task(r3 + "D")
       } yield r4
 
-      val result = chainOfTasks.attemptRun
+      val result = chainOfTasks.unsafePerformSyncAttempt
 
       result.isRight must beFalse
     }
@@ -130,7 +130,7 @@ class TaskSpec extends Specification {
         times3 <- addTime(times2)
       } yield times3
 
-      chainOfTasks.attemptRun.map(times => times.foldLeft((true, Long.MaxValue)) {
+      chainOfTasks.unsafePerformSyncAttempt.map(times => times.foldLeft((true, Long.MaxValue)) {
         case ((isOrdered, currentTime), time) => (isOrdered && currentTime > time, time)
       }).map {
         case (isOrdered, _) => isOrdered must beTrue
@@ -146,13 +146,13 @@ class TaskSpec extends Specification {
     "lift a value into a Task" in Result.unit {
       val task = Task.now(1)
 
-      task.attemptRun.map(_ must be_==(1)).isRight must beTrue
+      task.unsafePerformSyncAttempt.map(_ must be_==(1)).isRight must beTrue
     }
   }
 
   "Task.fail" should {
     "lift a throwable into a Task" in {
-      Task.fail(new RuntimeException("Fail!")).attemptRun.isLeft must beTrue
+      Task.fail(new RuntimeException("Fail!")).unsafePerformSyncAttempt.isLeft must beTrue
     }
   }
 
@@ -163,14 +163,14 @@ class TaskSpec extends Specification {
         Thread.sleep(100)
         startTime
       })
-      Task.gatherUnordered(tasks).attemptRun.map(list => list.exists(item => list.head - item > 50) must beFalse).isRight must beTrue
+      Task.gatherUnordered(tasks).unsafePerformSyncAttempt.map(list => list.exists(item => list.head - item > 50) must beFalse).isRight must beTrue
     }
 
     "run multiple tasks on different threads" in Result.unit {
       val tasks = (0 until 5).map(i => Task {
         Thread.currentThread()
       })
-      Task.gatherUnordered(tasks).attemptRun.map(list => {
+      Task.gatherUnordered(tasks).unsafePerformSyncAttempt.map(list => {
         val numUniqueThreads = list.toSet.size
         numUniqueThreads must be_>(1) // we should have used at least two threads
       }).isRight must beTrue
@@ -179,7 +179,7 @@ class TaskSpec extends Specification {
 
   "A timed Task" should {
     "error out if the task takes too long" in {
-      Task { Thread.sleep(300) }.timed(100).attemptRun.isLeft must beTrue
+      Task { Thread.sleep(300) }.timed(100).unsafePerformSyncAttempt.isLeft must beTrue
     }
   }
 }
