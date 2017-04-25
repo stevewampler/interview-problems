@@ -41,25 +41,30 @@ package com.sgw.problems
  *   removed = | 2 - 4 | = 2 => twice removed
  *
  */
-object Cousins {
-  object Node {
-    def apply(name: String, parent: Node): Node = Node(name, Option(parent))
-  }
+object Cousins2 {
+  type Node = Cousins.Node
 
-  case class Node(name: String, maybeParent: Option[Node] = None)
+  def relationship(node1: Node, node2: Node): Option[(Int, Int)] = relationship(Some(node1), Some(node2))
 
-  def relationship(n1: Node, n2: Node): Option[(Int, Int)] = hopsToLCA(n1, n2).map {
+  def relationship(maybeNode1: Option[Node], maybeNode2: Option[Node]): Option[(Int, Int)] = hopsToLCA(maybeNode1, maybeNode2).map {
     case (h1, h2) => (h1.min(h2) - 1, (h1-h2).abs)
   }
 
-  private def nodeToList(nOpt: Option[Node], list: List[Node] = Nil): List[Node] =
-    nOpt.map(n => n :: nodeToList(n.maybeParent, list)).getOrElse(list)
+  private def nodeToList(maybeNode: Option[Node], list: List[Node] = Nil): List[Node] =
+    maybeNode.map(node => nodeToList(node.maybeParent, node :: list)).getOrElse(list)
 
-  private def nodeToHopMap(n: Node): Map[Node, Int] =
-    nodeToList(Some(n)).zipWithIndex.toMap
+  private def hopsToLCA(maybeNode1: Option[Node], maybeNode2: Option[Node]): Option[(Int, Int)] = {
+    val list1 = nodeToList(maybeNode1)
+    val list2 = nodeToList(maybeNode2)
 
-  private def hopsToLCA(n2Opt: Option[Node], hop2: Int, hopMap: Map[Node, Int]): Option[(Int, Int)] =
-    n2Opt.flatMap(n2 => hopMap.get(n2).map(hop1 => (hop1, hop2)).orElse(hopsToLCA(n2.maybeParent, hop2 + 1, hopMap)))
+    if (list1.headOption != list2.headOption) {
+      return None
+    }
 
-  private def hopsToLCA(n1: Node, n2: Node): Option[(Int, Int)] = hopsToLCA(Some(n2), 0, nodeToHopMap(n1))
+    val sameList = list1.zip(list2).takeWhile {
+      case (node1, node2) => node1 == node2
+    }
+
+    Some(list1.length - sameList.length, list2.length - sameList.length)
+  }
 }
