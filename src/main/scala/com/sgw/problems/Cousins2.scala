@@ -46,7 +46,7 @@ object Cousins2 {
 
   def relationship(node1: Node, node2: Node): Option[(Int, Int)] = relationship(Some(node1), Some(node2))
 
-  def relationship(maybeNode1: Option[Node], maybeNode2: Option[Node]): Option[(Int, Int)] = hopsToLCA(maybeNode1, maybeNode2).map {
+  private def relationship(maybeNode1: Option[Node], maybeNode2: Option[Node]): Option[(Int, Int)] = hopsToLCA(maybeNode1, maybeNode2).map {
     case (h1, h2) => (h1.min(h2) - 1, (h1-h2).abs)
   }
 
@@ -54,17 +54,19 @@ object Cousins2 {
     maybeNode.map(node => nodeToList(node.maybeParent, node :: list)).getOrElse(list)
 
   private def hopsToLCA(maybeNode1: Option[Node], maybeNode2: Option[Node]): Option[(Int, Int)] = {
-    val list1 = nodeToList(maybeNode1)
-    val list2 = nodeToList(maybeNode2)
+    val pathToNode1 = nodeToList(maybeNode1)
+    val pathToNode2 = nodeToList(maybeNode2)
 
-    if (list1.headOption != list2.headOption) {
+    // if the nodes are related, then they'll have the same root node
+    if (pathToNode1.headOption != pathToNode2.headOption) {
       return None
     }
 
-    val sameList = list1.zip(list2).takeWhile {
+    // calculate the list of nodes that are the same between node1 and node2
+    val sameList = pathToNode1.zip(pathToNode2).takeWhile {
       case (node1, node2) => node1 == node2
     }
 
-    Some(list1.length - sameList.length, list2.length - sameList.length)
+    Some(pathToNode1.length - sameList.length, pathToNode2.length - sameList.length)
   }
 }

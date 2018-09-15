@@ -123,15 +123,15 @@ object Anagrams {
     *  Example: the subsets of the occurrence list `List(('a', 2), ('b', 2))` are:
     *
     *    List(
-    *      List(), *
-    *      List(('a', 1)), *
-    *      List(('a', 2)), *
-    *      List(('b', 1)), *
-    *      List(('a', 1), ('b', 1)), *
-    *      List(('a', 2), ('b', 1)), *
-    *      List(('b', 2)), *
-    *      List(('a', 1), ('b', 2)), *
-    *      List(('a', 2), ('b', 2)) *
+    *      List(),
+    *      List(('a', 1)),
+    *      List(('a', 2)),
+    *      List(('b', 1)),
+    *      List(('a', 1), ('b', 1)),
+    *      List(('a', 2), ('b', 1)),
+    *      List(('b', 2)),
+    *      List(('a', 1), ('b', 2)),
+    *      List(('a', 2), ('b', 2))
     *    )
     *
     *  Note that the order of the occurrence list subsets does not matter -- the subsets

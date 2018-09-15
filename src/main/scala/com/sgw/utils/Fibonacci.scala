@@ -30,18 +30,20 @@ object Fibonacci {
     }
   }
 
+  // using tail recursion and keeping track of the previous two values (O(n))
   @tailrec
-  def fib(i: Int, prev: Int = 1, prevprev: Int = 0): Int = {
-    if (i < 0) {
+  def fib(n: Int, prev: Int = 1, prevprev: Int = 0): Int = {
+    if (n < 0) {
       throw new RuntimeException("i must be >= 0")
-    } else if (i == 0 || i == 1) {
-      i
-    } else if (i == 2)
+    } else if (n == 0 || n == 1) {
+      n
+    } else if (n == 2)
       prev + prevprev
     else
-      fib(i - 1, prev + prevprev, prev)
+      fib(n - 1, prev + prevprev, prev)
   }
 
+  // using a while loop and a temp variable
   def fib2(i: Int): Int = {
     var n = i
 
@@ -62,10 +64,11 @@ object Fibonacci {
   }
 
   def main (args: Array[String]) {
-    println(fibonacci(11))
-    println(fibonacci2(11))
-    println(fibonacci3(11).reverse)
-    println(fib(11))
-    println(fib2(11))
+    val n = 40
+    println(fibonacci(n))
+    println(fibonacci2(n))
+    println(fibonacci3(n).reverse)
+    println(fib(n))
+    println(fib2(n))
   }
 }

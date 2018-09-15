@@ -52,8 +52,8 @@ object Cousins {
     case (h1, h2) => (h1.min(h2) - 1, (h1-h2).abs)
   }
 
-  private def nodeToList(nOpt: Option[Node], list: List[Node] = Nil): List[Node] =
-    nOpt.map(n => n :: nodeToList(n.maybeParent, list)).getOrElse(list)
+  private def nodeToList(maybeNode: Option[Node]): List[Node] =
+    maybeNode.map(n => n :: nodeToList(n.maybeParent)).getOrElse(Nil)
 
   private def nodeToHopMap(n: Node): Map[Node, Int] =
     nodeToList(Some(n)).zipWithIndex.toMap

@@ -36,3 +36,11 @@ case class Succ(n: Nat) extends Nat {
   def + (that: Nat): Nat = Succ(n + that)
   def - (that: Nat): Nat = if (that.isZero) this else n - that.predecessor
 }
+
+object NatTest {
+  def main(args: Array[String]): Unit = {
+    val a = Succ(Succ(Succ(Zero)))
+
+    println(a)
+  }
+}

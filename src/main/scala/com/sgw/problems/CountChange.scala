@@ -9,26 +9,35 @@ package com.sgw.problems
 object CountChange {
   def countChange(money: Int, coins: List[Int]): Int = {
     // coins assumed to be sorted from smallest to largest denom.
-    def go(money: Int, coins: List[Int], changeCombo: List[Int] = List(), changeCombos: List[List[Int]] = List()): List[List[Int]] =
+    def go(
+      money: Int,
+      coins: List[Int],
+      changeCombo: List[Int] = List()
+    ): List[List[Int]] = {
+      println(s"money=$money, coins=$coins, changeCombo=$changeCombo")
+
       if (coins.isEmpty)
-        changeCombos
+        Nil
       else {
         val newMoney = money - coins.head
 
         if (newMoney < 0)
-          changeCombos // no need to check the tail (larger coins)
+          Nil // no need to check the tail (larger coins)
         else {
           val newChangeCombo = coins.head :: changeCombo
 
           // if we found a solution ...
-          if (newMoney == 0)
-            newChangeCombo :: changeCombos
-          else {
+          if (newMoney == 0) {
+            val result = newChangeCombo :: Nil
+            println(s"found newChangeCombo=$newChangeCombo")
+            result
+          } else {
             // keep trying the current head
-            go(newMoney, coins, newChangeCombo, changeCombos)
-          } ++ go(money, coins.tail, changeCombo, changeCombos)
+            go(newMoney, coins, newChangeCombo)
+          } ++ go(money, coins.tail, changeCombo)
         }
       }
+    }
 
     val sortedCoins = coins.sortWith(_.compareTo(_) < 0)
 
@@ -36,7 +45,7 @@ object CountChange {
 
     val results = go(money, sortedCoins)
 
-    //    println(s"results = $results")
+    println(s"results = $results")
 
     results.size
   }

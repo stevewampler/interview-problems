@@ -31,4 +31,8 @@ class CountChangeSuite extends FunSuite {
   test("countChange: zero coins") {
     assert(countChange(300,List()) === 0)
   }
+
+  test("countChange: one coin") {
+    assert(countChange(300,List(100)) === 1)
+  }
 }
