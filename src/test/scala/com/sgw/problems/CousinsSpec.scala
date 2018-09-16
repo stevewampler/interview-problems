@@ -28,15 +28,4 @@ class CousinsSpec extends FlatSpec with Matchers with BeforeAndAfter {
     Cousins.relationship(F, Y) should be (Some((2, 1)))
     Cousins.relationship(D, Y) should be (Some((1, 2)))
   }
-
-  "The Cousins2.relationship function" should "return None for unrelated nodes" in {
-    Cousins2.relationship(F, I) should be (None)
-  }
-
-  "The Cousins2.relationship function" should "correctly calculate the relationship between two related nodes" in {
-    Cousins2.relationship(B, C) should be (Some((0, 0)))
-    Cousins2.relationship(F, E) should be (Some((1, 1)))
-    Cousins2.relationship(F, Y) should be (Some((2, 1)))
-    Cousins2.relationship(D, Y) should be (Some((1, 2)))
-  }
 }
