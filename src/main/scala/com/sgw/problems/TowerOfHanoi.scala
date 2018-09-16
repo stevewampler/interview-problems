@@ -41,7 +41,7 @@ object TowerOfHanoi {
     * @param d the name of the destination peg
     * @param e the name of the extra peg
     */
-  def go(n: Int, s: String = "s", d: String = "d", e: String = "e"): Unit = {
+  private def go(n: Int, s: String = "s", d: String = "d", e: String = "e"): Unit = {
 
     if (n <= 0) return
 
