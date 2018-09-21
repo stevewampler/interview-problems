@@ -109,9 +109,12 @@ object JuggleFest {
       *
       * @return the list of unassigned jugglers
       */
-    def assignToNextCircuit(unassignedJugglers: List[Juggler]): List[Juggler] = nextCircuit.assign(this, unassignedJugglers)
+    def assignToNextCircuit(unassignedJugglers: List[Juggler]): List[Juggler] =
+      nextCircuit.assign(this, unassignedJugglers)
 
-    override def toString = s"""$name ${preferredCircuits.map(circuit => s"""${circuit.name}:${circuit.score(this)}""").mkString(" ")}"""
+    override def toString = s"""$name ${preferredCircuits.map { circuit =>
+      s"""${circuit.name}:${circuit.score(this)}"""
+    }.mkString(" ")}"""
   }
 
   /**
