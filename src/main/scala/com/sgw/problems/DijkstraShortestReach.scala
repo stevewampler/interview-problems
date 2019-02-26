@@ -9,10 +9,10 @@ import scala.io.Source
   *
 From: https://www.hackerrank.com/challenges/dijkstrashortreach
 
-Given a graph consisting N nodes (labelled 1 to N) where a specific given node S represents the starting position S and
+Given a graph consisting of N nodes (labelled 1 to N) where a specific node S represents the starting position S and
 an edge between two nodes is of a given length, which may or may not be equal to other lengths in the graph.
 
-It is required to calculate the shortest distance from the start position (Node S) to all of the other nodes in the graph.
+Calculate the shortest distance from the start position (Node S) to all of the other nodes in the graph.
 
 Note 1: If a node is unreachable , the distance is assumed as −1.
 

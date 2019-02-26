@@ -2,7 +2,7 @@ package com.sgw.problems
 
 /**
  * Given an input array of strings, where the first string is the number of subsequent strings in the array and the
- * subsequent strings contain two space-separated integers. Count the number integers in between the two specified
+ * subsequent strings contain two space-separated integers. Count the number integers between the two specified
  * integers (inclusive on both ends) that are the square of some other integer.
  * 
  * For example, this input:
@@ -28,7 +28,7 @@ package com.sgw.problems
  */
 object CountSquaredIntegers {
   /**
-   * This is the brute force solution. Take too long to run for large ranges.
+   * This is the brute force solution. Takes too long to run for large ranges.
    */
   def bruteForceCountSquaredIntegers1(ranges: Array[(Int, Int)]): Array[Int] = {
     ranges.map {

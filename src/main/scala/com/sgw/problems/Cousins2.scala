@@ -1,7 +1,5 @@
 package com.sgw.problems
 
-import com.sgw.problems.Cousins.Node
-
 /**
  * Write a function that, given two tree nodes, will return the node's relationship (if any) in terms of "degree" and how far removed
  * they are from each other.
