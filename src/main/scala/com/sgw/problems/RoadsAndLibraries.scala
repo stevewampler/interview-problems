@@ -2,131 +2,79 @@ package com.sgw.problems
 
 import java.io.{BufferedReader, InputStreamReader}
 
-import scala.collection.mutable
 import scala.tools.nsc.interpreter.InputStream
 
 /**
-  * See https://www.hackerrank.com/challenges/torque-and-development/problem?h_l=interview&isFullScreen=false&playlist_slugs%5B%5D%5B%5D%5B%5D%5B%5D%5B%5D=interview-preparation-kit&playlist_slugs%5B%5D%5B%5D%5B%5D%5B%5D%5B%5D=graphs
+  * You're given n cities and m possible connections/roads that can be built between those cities.
+  * You're also given the cost of building a library in a city (c_lib) and the cost of building
+  * a road between two cities (c_road). The goal is to minimize the cost of building libraries and roads
+  * such that every city either contains a library or is connected to another city that contains a library.
+  *
+  * Strategy:
+  *
+  * If it costs less to build a library than it does to build a road, then just build libraries in all of the cities.
+  * If it costs more to build a library than to build a road, then, for each connected set of cities,
+  * build a single library and then connect all of the cities in the set together to give each city access to the
+  * library. It doesn't matter which city contains the library b/c the cost of building roads between cities is
+  * a constant.
+  *
+  * From HackerRank: https://www.hackerrank.com/challenges/torque-and-development/problem?h_l=interview&isFullScreen=false&playlist_slugs%5B%5D%5B%5D%5B%5D%5B%5D%5B%5D=interview-preparation-kit&playlist_slugs%5B%5D%5B%5D%5B%5D%5B%5D%5B%5D=graphs
   */
 object RoadsAndLibraries {
 
-  // Complete the roadsAndLibraries function below.
   def roadsAndLibraries(n: Int, c_lib: Long, c_road: Long, cities: Array[Array[Int]]): Long = {
     // if libraries cost less to build than roads ...
     if (c_lib <= c_road) {
       // build a library at each city
       n * c_lib
     } else { // build one library for each connected set of cities and connect them with roads
-      // group cities based on how they're connected
-      val cityPartitions: List[Set[Int]] = partitionCities2(
+      // group cities into a list of sets based on how they're connected
+      val nodeSets: List[Set[Int]] = collectNodeSets(
         n,
-        cities.toList.map { case Array(city1, city2) =>
-          (city1, city2)
-        }
+        toAdjacentNodesMap(
+          cities.toList.map { case Array(city1, city2) =>
+            (city1, city2)
+          }
+        )
       )
 
-//      println(cityPartitions)
+      val numLibraries = nodeSets.size // build one lib. per connected set of cities
 
-      val numLibraries = cityPartitions.size // build one lib. per city partition
-
-      val numRoads = cityPartitions.map { cityPartition =>
-        // returns the number of roads to built between cities in the partition
-        cityPartition.size - 1
+      val numRoads = nodeSets.map { nodeSet =>
+        // return the number of roads to built between the connected cities
+        nodeSet.size - 1
       }.sum // add up all the roads
-
-//      println(numLibraries)
-//      println(numRoads)
 
       numLibraries * c_lib + numRoads * c_road
     }
   }
 
-  private def toMap(n: Int, pairs: List[(Int, Int)]): Map[Int, Set[Int]] = {
-    val map1: Map[Int, Set[Int]] = pairs.groupBy { pair =>
-      pair._1
-    }.map { case (i, pairs) =>
-      i -> pairs.map { case (_, i2) =>
-        i2
-      }.toSet
+  // creates a node-to-adjacent-nodes map from the list of edges
+  private def toAdjacentNodesMap(edges: List[(Int, Int)]): Map[Int, Set[Int]] =
+    edges.foldLeft(Map[Int, Set[Int]]()) { case (map, (i1, i2)) =>
+      map.updated(i1, map.getOrElse(i1, Set()) + i2).updated(i2, map.getOrElse(i2, Set()) + i1)
     }
 
-    val map2: Map[Int, Set[Int]] = pairs.groupBy { pair =>
-      pair._2
-    }.map { case (i, pairs) =>
-      i -> pairs.map { case (i1, _) =>
-        i1
-      }.toSet
-    }
-
-    val map = (1 to n).map { i =>
-      val set1: Set[Int] = map1.getOrElse(i, Set())
-      val set2: Set[Int] = map2.getOrElse(i, Set())
-
-      i -> (set1 ++ set2)
-    }.toMap
-
-//    println(s"map = $map")
-
-    map
-  }
-
-//  // using a stack to keep track of the nodes we need to work on
-//  private val stack = mutable.Stack[Int]()
-
-//  // collects all of the nodes associated with the ith node
-//  private def collectSet(i: Int, map: Map[Int, Set[Int]], visited: mutable.Set[Int]): mutable.Set[Int] = {
-//    // this is the set of nodes we'll return
-//    val set: mutable.Set[Int] = mutable.Set[Int]()
-//
-//    // push the root node onto the stack
-//    stack.push(i)
-//
-//    // loop while we still have nodes to work on ...
-//    while (stack.nonEmpty) {
-//      // get the next node to work on
-//      val j = stack.pop()
-//
-//      // if we haven't already visited the node ...
-//      if (!visited.contains(j)) {
-//        // add it to the set
-//        set.add(j)
-//
-//        // push all of j's child nodes onto the stack
-//        stack.pushAll(map.getOrElse(j, Set.empty[Int]))
-//
-//        // mark the jth node as visited
-//        visited.add(j)
-//      }
-//    }
-//
-//    //    println(s"set = ${set.toSet}")
-//
-//    set
-//  }
-
-  // collects all of the nodes associated with the ith node
-  private def collectSet(root: Int, map: Map[Int, Set[Int]], set: Set[Int]): Set[Int] = {
-    map.getOrElse(root, Set()).foldLeft(set) { case (set, child) =>
+  // recursively collects all of the nodes connected to the specified node into a set of connected nodes
+  private def collectNodeSet(node: Int, adjacentNodesMap: Map[Int, Set[Int]], set: Set[Int]): Set[Int] =
+    adjacentNodesMap.getOrElse(node, Set()).foldLeft(set) { case (set, child) =>
       if (set.contains(child)) {
         set
       } else {
-        collectSet(child, map, set + child)
+        collectNodeSet(child, adjacentNodesMap, set + child)
       }
     }
-  }
 
-  private def collectSets(n: Int, map: Map[Int, Set[Int]]): List[Set[Int]] = {
+  // finds all of the connected sets of nodes
+  private def collectNodeSets(n: Int, map: Map[Int, Set[Int]]): List[Set[Int]] =
     (1 to n).foldLeft(List[Set[Int]](), Set[Int]()) { case ((listOfSets, visited), i) =>
       if (visited.contains(i)) {
         (listOfSets, visited)
       } else {
-        val set = collectSet(i, map, Set[Int](i))
+        val set = collectNodeSet(i, map, Set[Int](i))
         (set :: listOfSets, visited ++ set)
       }
     }._1
-  }
-
-  private def partitionCities2(n: Int, pairs: List[(Int, Int)]): List[Set[Int]] = collectSets(n, toMap(n, pairs))
 
 
 
