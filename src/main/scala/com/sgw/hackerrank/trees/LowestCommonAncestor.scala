@@ -1,4 +1,4 @@
-package com.sgw.problems
+package com.sgw.hackerrank.trees
 
 /**
   * You are given pointer to the root of the binary search tree and two values v1 and v2.

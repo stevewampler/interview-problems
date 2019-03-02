@@ -1,14 +1,16 @@
-package com.sgw.problems
+package com.sgw.problems.hackerrank.graphs
 
+import com.sgw.hackerrank.graphs.RoadsAndLibraries
 import com.sgw.utils.Timer
 import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers}
 
 class RoadsAndLibrariesSpec extends FlatSpec with Matchers with BeforeAndAfter {
+  val path = "/problems/hackerrank/graphs/roadsandlibraries"
   "The RoadsAndLinks object" should "correctly calculate the cost of building roads and libraries" in {
     println {
       Timer {
         RoadsAndLibraries.runFromInputStream(
-          this.getClass.getResourceAsStream("/problems/RoadsAndLibrariesSpecInput00.txt")
+          this.getClass.getResourceAsStream(s"$path/RoadsAndLibrariesSpecInput00.txt")
         ) should be (
           Seq(
             4,
@@ -21,7 +23,7 @@ class RoadsAndLibrariesSpec extends FlatSpec with Matchers with BeforeAndAfter {
     println {
       Timer {
         RoadsAndLibraries.runFromInputStream(
-          this.getClass.getResourceAsStream("/problems/RoadsAndLibrariesSpecInput01.txt")
+          this.getClass.getResourceAsStream(s"$path/RoadsAndLibrariesSpecInput01.txt")
         ) should be (
           Seq(
             12
@@ -33,7 +35,7 @@ class RoadsAndLibrariesSpec extends FlatSpec with Matchers with BeforeAndAfter {
     println {
       Timer {
         RoadsAndLibraries.runFromInputStream(
-          this.getClass.getResourceAsStream("/problems/RoadsAndLibrariesSpecInput02.txt")
+          this.getClass.getResourceAsStream(s"$path/RoadsAndLibrariesSpecInput02.txt")
         ) should be (
           Seq(
             15
@@ -45,7 +47,7 @@ class RoadsAndLibrariesSpec extends FlatSpec with Matchers with BeforeAndAfter {
     println {
       Timer {
         RoadsAndLibraries.runFromInputStream(
-          this.getClass.getResourceAsStream("/problems/RoadsAndLibrariesSpecInput03.txt")
+          this.getClass.getResourceAsStream(s"$path/RoadsAndLibrariesSpecInput03.txt")
         ) should be(
           Seq(
             7850257285L,
@@ -66,7 +68,7 @@ class RoadsAndLibrariesSpec extends FlatSpec with Matchers with BeforeAndAfter {
     println {
       Timer {
         RoadsAndLibraries.runFromInputStream(
-          this.getClass.getResourceAsStream("/problems/RoadsAndLibrariesSpecInput04.txt")
+          this.getClass.getResourceAsStream(s"$path/RoadsAndLibrariesSpecInput04.txt")
         ) should be (
           Seq(
             9234981465L,

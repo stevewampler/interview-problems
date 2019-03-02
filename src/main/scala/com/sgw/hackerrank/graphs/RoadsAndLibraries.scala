@@ -1,4 +1,4 @@
-package com.sgw.problems
+package com.sgw.hackerrank.graphs
 
 import java.io.{BufferedReader, InputStreamReader}
 
@@ -105,4 +105,3 @@ object RoadsAndLibraries {
     }
   }
 }
-

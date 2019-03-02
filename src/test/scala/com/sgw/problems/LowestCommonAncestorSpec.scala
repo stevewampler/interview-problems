@@ -1,9 +1,10 @@
 package com.sgw.problems
 
+import com.sgw.hackerrank.trees.LowestCommonAncestor
 import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers}
 
 class LowestCommonAncestorSpec extends FlatSpec with Matchers with BeforeAndAfter {
-  import LowestCommonAncestor.Node
+  import com.sgw.hackerrank.trees.LowestCommonAncestor.Node
 
   "The LowestCommonAncestor" should "find the lowest common ancestor given to values in a binary tree" in {
     val root = Node(
