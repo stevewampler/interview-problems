@@ -38,6 +38,18 @@ class MaxSubsetSumSpec extends FlatSpec with Matchers with BeforeAndAfter {
     )
 
     MaxSubsetSum.run(
+      this.getClass.getResourceAsStream(s"$path/SmallTestInput05.txt")
+    ) should be (
+      2
+    )
+
+    MaxSubsetSum.run(
+      this.getClass.getResourceAsStream(s"$path/SmallTestInput06.txt")
+    ) should be (
+      4
+    )
+
+    MaxSubsetSum.run(
       this.getClass.getResourceAsStream(s"$path/TestInput01.txt")
     ) should be (
       7412694
