@@ -1,12 +1,15 @@
 package com.sgw.problems
 
 /**
-  * A binary tree node.
+  * An immutable binary tree node.
   *
   * @param value the node's value
   * @param maybeLeft the node's optional left node
   * @param maybeRight the node's optional right node
   * @tparam V the node value's type
+  *
+  * Issues: This implementation relies heavily on non-tail recursive functions. Next step is to either make
+  * them tail recursive (if possible), or re-implement them with stacks and queues.
   */
 case class BinaryTreeNode[V](
   value: V,
@@ -21,6 +24,13 @@ case class BinaryTreeNode[V](
 
   def max: BinaryTreeNode[V] = maybeRight.map(_.max).getOrElse(this)
 
+  /**
+    * Inserts the specified node into this node's tree.
+    *
+    * @param node the node ot insert
+    *
+    * @return a copy of this node with the inserted node as one of its children
+    */
   def insert(node: BinaryTreeNode[V]): BinaryTreeNode[V] = {
     if (ordering.compare(node.value, value) < 0) {
       copy(
@@ -41,15 +51,26 @@ case class BinaryTreeNode[V](
     }
   }
 
+  /**
+    * Deleted the node containing the target value if one is found.
+    *
+    * @param targetValue the target value
+    *
+    * @return an optional edited copy of this node. If the option is empty, then this node was the one
+    *         deleted and this node had no children. If the option is not empty, then the returned node
+    *         is a copy of this node with the target node removed (if found).
+    */
   def delete(targetValue: V): Option[BinaryTreeNode[V]] = {
-    if (targetValue == value) {
+    val comparison = ordering.compare(targetValue, value)
+
+    if (comparison == 0) {
       // this is the node that needs to be deleted
       maybeLeft.map { left =>
         maybeRight.map { right =>
           left.insert(right)
         }.getOrElse(left)
       } orElse maybeRight
-    } else if (ordering.compare(targetValue, value) < 0) {
+    } else if (comparison < 0) {
       maybeLeft.map { left =>
         copy(
           maybeLeft = left.delete(targetValue)
@@ -68,17 +89,31 @@ case class BinaryTreeNode[V](
     }
   }
 
+  /**
+    * Searches this node and its children for the node that contains the specified
+    * target value and returns the path (a list of nodes) from
+    * the target node to this if a target node was found; otherwise this method returns an empty path.
+    *
+    * @param targetValue the value to be found
+    * @param path the path from this node's parent to the root of the tree
+    *
+    * @return the path (list of nodes) from the target node, if found, to the root of the tree or an empty
+    *         path if the target was not found.
+    */
   def search(
     targetValue: V,
     path: List[BinaryTreeNode[V]] = List.empty[BinaryTreeNode[V]]
-  ): Seq[BinaryTreeNode[V]] =
-    if (targetValue == value) {
+  ): Seq[BinaryTreeNode[V]] = {
+    val comparison = ordering.compare(targetValue, value)
+
+    if (comparison == 0) {
       this :: path
-    } else if (ordering.compare(targetValue, value) < 0) {
+    } else if (comparison < 0) {
       maybeLeft.map(_.search(targetValue, this :: path)).getOrElse(Seq.empty[BinaryTreeNode[V]])
     } else {
       maybeRight.map(_.search(targetValue, this :: path)).getOrElse(Seq.empty[BinaryTreeNode[V]])
     }
+  }
 
   /**
     * Returns a list this node and its children pre order
@@ -111,6 +146,15 @@ case class BinaryTreeNode[V](
   }
 }
 
+/**
+  * An immutable BinaryTree.
+  *
+  * @param maybeRoot an optional root node for this tree.
+  * @param ordering the order for the values of type V
+  * @tparam V the type of the values held in this tree
+  *
+  * TODO: make this collection properly handle variants.
+  */
 case class BinaryTree[V](
   maybeRoot: Option[BinaryTreeNode[V]] = None
 )(

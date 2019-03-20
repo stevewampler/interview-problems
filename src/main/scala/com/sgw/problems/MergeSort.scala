@@ -8,7 +8,7 @@ object MergeSort {
   }
 
   private def mergeSort(vals1: Array[Int], vals2: Array[Int]): Array[Int] =
-    merge3(sort(vals1), sort(vals2))
+    merge(sort(vals1), sort(vals2))
 
   private def merge(vals1: Array[Int], vals2: Array[Int]): Array[Int] = {
     if (vals1.isEmpty) {
@@ -24,37 +24,37 @@ object MergeSort {
 
     val result = new Array[Int](vals1.length + vals2.length)
 
-    result.indices.foldLeft(result) {
-      case (acc, i) => {
-        if (i1 < vals1.length) {
-          val v1 = vals1(i1)
+    result.indices.foldLeft(result) { case (acc, i) =>
+      val v = if (i1 < vals1.length) {
+        val v1 = vals1(i1)
 
-          if (i2 < vals2.length) {
-            val v2 = vals2(i2)
+        if (i2 < vals2.length) {
+          val v2 = vals2(i2)
 
-            if (v2 <= v1) {
-              acc(i) = v2
-              i2 = i2 + 1
-            } else {
-              acc(i) = v1
-              i1 = i1 + 1
-            }
+          if (v2 <= v1) {
+            i2 = i2 + 1
+            v2
           } else {
-            acc(i) = v1
             i1 = i1 + 1
+            v1
           }
         } else {
-          if (i2 < vals2.length) {
-            val v2 = vals2(i2)
-            acc(i) = v2
-            i2 = i2 + 1
-          } else {
-            throw new RuntimeException("This shouldn't happen.")
-          }
+          i1 = i1 + 1
+          v1
         }
-
-        acc
+      } else {
+        if (i2 < vals2.length) {
+          val v2 = vals2(i2)
+          i2 = i2 + 1
+          v2
+        } else {
+          throw new RuntimeException("This shouldn't happen.")
+        }
       }
+
+      acc(i) = v
+
+      acc
     }
   }
 
