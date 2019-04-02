@@ -1,4 +1,4 @@
-package com.sgw.problems.cracking.strings
+package com.sgw.cracking.strings
 
 object IsSubstring {
   // is s1 a substring of s2?

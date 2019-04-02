@@ -25,7 +25,7 @@ package com.sgw.problems
  * Approach:
  *
  * Start with the bottom layer of bricks and work upward. For each layer, calculate the volume of water
- * the layer can hold by turning the layer into an matrix of true and false values; where true indicates a block exists
+ * the layer can hold by turning the layer into a matrix of true and false values; where true indicates a block exists
  * on the layer at a specific row and column index and false indicates no block exists.
  *
  * Now scan each layer looking for cavities (connected values of false values in a layer's matrix,

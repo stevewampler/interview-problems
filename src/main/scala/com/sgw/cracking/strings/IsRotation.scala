@@ -1,4 +1,4 @@
-package com.sgw.problems.cracking.strings
+package com.sgw.cracking.strings
 
 // write a function that will determine if one string is a rotation of another using only one call to isSubstring
 object IsRotation {

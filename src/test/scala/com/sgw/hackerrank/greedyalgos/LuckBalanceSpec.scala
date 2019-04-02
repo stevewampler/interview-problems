@@ -1,4 +1,4 @@
-package com.sgw.problems.hackerrank.greedyalgos
+package com.sgw.hackerrank.greedyalgos
 
 import com.sgw.hackerrank.greedyalgos.{LuckBalance, MinAbsDifference}
 import com.sgw.utils.Timer

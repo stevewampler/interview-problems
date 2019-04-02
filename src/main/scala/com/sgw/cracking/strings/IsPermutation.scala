@@ -1,4 +1,4 @@
-package com.sgw.problems.cracking.strings
+package com.sgw.cracking.strings
 
 // write a function that will return true if a string is a permutation of another string
 object IsPermutation {

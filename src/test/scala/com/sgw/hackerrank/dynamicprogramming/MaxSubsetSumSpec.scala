@@ -1,4 +1,4 @@
-package com.sgw.problems.hackerrank.dynamicprogramming
+package com.sgw.hackerrank.dynamicprogramming
 
 import com.sgw.hackerrank.dynamicprogramming.MaxSubsetSum
 import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers}

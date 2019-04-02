@@ -1,4 +1,4 @@
-package com.sgw.problems.cracking.strings
+package com.sgw.cracking.strings
 
 // write a function that determines if a string is the permutation of a palindrome (e.g. tococat)
 // the palindrome does not need to be a dictionary word

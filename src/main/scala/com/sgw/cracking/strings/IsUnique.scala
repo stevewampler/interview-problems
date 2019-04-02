@@ -1,4 +1,4 @@
-package com.sgw.problems.cracking.strings
+package com.sgw.cracking.strings
 
 // write a function that will determine if a string contains all unique characters
 object IsUnique {

@@ -1,4 +1,4 @@
-package com.sgw.problems.hackerrank.graphs
+package com.sgw.hackerrank.graphs
 
 import com.sgw.hackerrank.graphs.RoadsAndLibraries
 import com.sgw.utils.Timer
