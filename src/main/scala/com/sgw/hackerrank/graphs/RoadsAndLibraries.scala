@@ -1,8 +1,6 @@
 package com.sgw.hackerrank.graphs
 
-import java.io.{BufferedReader, InputStreamReader}
-
-import scala.tools.nsc.interpreter.InputStream
+import java.io.{BufferedReader, InputStream, InputStreamReader}
 
 /**
   * You're given n cities and m possible connections/roads that can be built between those cities.

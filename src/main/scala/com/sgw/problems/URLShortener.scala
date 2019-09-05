@@ -35,8 +35,8 @@ object URLShortener {
  * TODO: initialize the BloomFilters from the DB tables
  */
 case class URLShortener(
-  idBloomFilter: BF = new BloomFilterMonoid(6, 32, 1).zero,
-  urlBloomFilter: BF = new BloomFilterMonoid(6, 32, 1).zero,
+  idBloomFilter: BF[String] = new BloomFilterMonoid[String](6, 32).zero,
+  urlBloomFilter: BF[String] = new BloomFilterMonoid[String](6, 32).zero,
   idToURLMap: Map[String, String] = Map[String, String](),
   urlToIdMap: Map[String, String] = Map[String, String]()
 ) {

@@ -1,6 +1,6 @@
 package com.sgw.cracking.strings
 
-// write a function that determines if a string is the permutation of a palindrome (e.g. tococat)
+// write a function that determines if a string is the permutation of a palindrome (e.g. tacocat)
 // the palindrome does not need to be a dictionary word
 object IsPalindromePermutation {
 

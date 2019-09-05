@@ -19,7 +19,6 @@ object BalancedBrackets {
     }
   }
 
-  // Complete the isBalanced function below.
   def isBalanced(s: String): String = Try {
     val stack = s.foldLeft(mutable.Stack[Char]()) { case (stack, c) =>
       c match {
