@@ -139,14 +139,14 @@ object GetTotalsByDomain extends App {
       }.map(_ -> count)
     }.groupBy(_._1).mapValues(_.map(_._2).sum)
 
-  def getTotalsByDomain4(counts: Vector[String]) = counts.map(_.split(',')).flatMap { case Array(c, d) =>
-    val arr = d.split('.')
-    arr.indices.foldLeft(List[(String, String)]()) { case (acc, i) =>
-      (arr.drop(i).mkString("."), c) :: acc
-    }
-  }.groupBy(_._1).mapValues(_.map(_._2.toInt).sum)
+  def getTotalsByDomain4(counts: Vector[String]) =
+    counts.map(_.split(',')).flatMap { case Array(c, d) =>
+      val arr = d.split('.')
+      arr.indices.foldLeft(List[(String, String)]()) { case (acc, i) =>
+        (arr.drop(i).mkString("."), c) :: acc
+      }
+    }.groupBy(_._1).mapValues(_.map(_._2.toInt).sum)
 
-  val result = getTotalsByDomain(counts)
   val expected = List(
     1320 -> "com",
     900 -> "google.com",
@@ -163,30 +163,32 @@ object GetTotalsByDomain extends App {
     1 -> "sports"
   )
 
-//  println("result")
+//  val result = getTotalsByDomain(counts)
+
+  //  println("result")
 //  result.foreach(println)
 //  println("expected")
 //  expected.foreach(println)
 
-  assert(
-    result.toSet == expected.toSet
-  )
-
-  val result2 = getTotalsByDomain2(counts)
-  val expected2 = expected.map(_.swap)
-
-  assert(
-    result2.toSet == expected2.toSet
-  )
-
-  val result3 = getTotalsByDomain3(counts)
-
-  assert(
-    result3.toSet == expected2.toSet
-  )
+//  assert(
+//    result.toSet == expected.toSet
+//  )
+//
+//  val result2 = getTotalsByDomain2(counts)
+//  val expected2 = expected.map(_.swap)
+//
+//  assert(
+//    result2.toSet == expected2.toSet
+//  )
+//
+//  val result3 = getTotalsByDomain3(counts)
+//
+//  assert(
+//    result3.toSet == expected2.toSet
+//  )
 
   val result4 = getTotalsByDomain4(counts)
   assert(
-    result4.toSet == expected2.toSet
+    result4.toSet == expected.toSet
   )
 }
