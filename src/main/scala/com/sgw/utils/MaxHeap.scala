@@ -5,24 +5,24 @@ import scala.math.Ordering
 /**
  * Created by wamplers on 3/14/16.
  */
-case class MaxHeap[T](a: Array[T])(implicit ord: Ordering[T]) {
+case class MaxHeap[T](arr: Array[T])(implicit ord: Ordering[T]) {
   private var begin = 0
 
-  Heapsort.heapify(a, begin)
+  Heapsort.heapify(arr, begin)
 
-  def length: Int = a.length - begin
+  def length: Int = arr.length - begin
 
   def isEmpty: Boolean = length <= 0
 
   def nonEmpty: Boolean = length > 0
 
-  def head: T = a(begin)
+  def head: T = arr(begin)
 
-  def headOption: Option[T] = if (nonEmpty) Some(a(begin)) else None
+  def headOption: Option[T] = if (nonEmpty) Some(arr(begin)) else None
 
   def dropOne: MaxHeap[T] = if (nonEmpty) {
     begin = begin + 1
-    Heapsort.heapify(a, begin)
+    Heapsort.heapify(arr, begin)
     this
   } else {
     this
