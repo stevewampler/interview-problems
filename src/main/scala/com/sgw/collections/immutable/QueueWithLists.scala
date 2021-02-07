@@ -1,4 +1,4 @@
-package com.sgw.collections
+package com.sgw.collections.immutable
 
 import scala.annotation.tailrec
 
@@ -23,38 +23,47 @@ import scala.annotation.tailrec
   *
   * From: https://www.hackerrank.com/challenges/ctci-queue-using-two-stacks/problem?h_l=interview&playlist_slugs%5B%5D=interview-preparation-kit&playlist_slugs%5B%5D=stacks-queues&h_r=next-challenge&h_v=zen
   */
-object QueueWithLists {
-  case class Queue(private val enq: List[Long] = List(), private val deq: List[Long] = List()) {
-    final def enqueue(value: Long): (Long, Queue) = {
-      (value, copy(enq = value :: enq))
-    }
+object Queue {
+  def empty[T]: Queue[T] = Queue[T]()
+}
 
-    @tailrec
-    final def dequeue: (Long, Queue) = {
-      if (deq.isEmpty) {
-        if (enq.isEmpty) {
-          throw new RuntimeException("Empty queue")
-        } else {
-          copy(enq = List(), deq = enq.reverse).dequeue
-        }
-      } else {
-        (deq.head, copy(deq = deq.tail))
-      }
-    }
+case class Queue[T](private val enq: List[T] = List.empty[T], private val deq: List[T] = List.empty[T]) {
+  final def enqueue[U >: T](value: T): Queue[U] = {
+    copy(enq = value :: enq)
+  }
 
-    @tailrec
-    final def peek: (Long, Queue) = {
-      if (deq.isEmpty) {
-        if (enq.isEmpty) {
-          throw new RuntimeException("Empty queue")
-        } else {
-          copy(enq = List(), deq = enq.reverse).peek
-        }
+  @tailrec
+  final def dequeue: (T, Queue[T]) = {
+    if (deq.isEmpty) {
+      if (enq.isEmpty) {
+        throw new NoSuchElementException("Empty queue")
       } else {
-        (deq.head, this)
+        copy(enq = List(), deq = enq.reverse).dequeue
       }
+    } else {
+      (deq.head, copy(deq = deq.tail))
     }
   }
+
+  @tailrec
+  final def peek: (T, Queue[T]) = {
+    if (deq.isEmpty) {
+      if (enq.isEmpty) {
+        throw new RuntimeException("Empty queue")
+      } else {
+        copy(enq = List(), deq = enq.reverse).peek
+      }
+    } else {
+      (deq.head, this)
+    }
+  }
+
+  def size: Int = enq.size + deq.size
+  def isEmpty: Boolean = enq.isEmpty && deq.isEmpty
+  def nonEmpty: Boolean = !isEmpty
+}
+
+object QueueWithLists {
 
   def main(args: Array[String]) {
 
@@ -77,10 +86,10 @@ object QueueWithLists {
     val results = cmds.map(_.split(' ')).map {
       case Array(cmd) => (cmd.toInt, None)
       case Array(cmd, value) => (cmd.toInt, Some(value.toLong))
-    }.foldLeft((List[Long](), Queue())) { case ((acc, queue), (cmd, maybeValue)) =>
+    }.foldLeft((List[Long](), Queue[Long]())) { case ((acc, queue), (cmd, maybeValue)) =>
       cmd match {
         case 1 =>
-          val (_, newQueue) = maybeValue.map(value => queue.enqueue(value)).getOrElse {
+          val newQueue = maybeValue.map(value => queue.enqueue(value)).getOrElse {
             throw new RuntimeException("Command 1 expects a value")
           }
           (acc, newQueue)
@@ -100,5 +109,3 @@ object QueueWithLists {
     assert(results == List(14, 14, 60, 78))
   }
 }
-
-

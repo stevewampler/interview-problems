@@ -1,6 +1,7 @@
 package com.sgw.problems
 
-import com.sgw.collections.Trie
+import com.sgw.collections.immutable
+import com.sgw.collections.immutable.Trie
 
 /**
   * Given a set of potential search result strings and a prefix string, return the strings that could auto-complete
@@ -9,7 +10,7 @@ import com.sgw.collections.Trie
   * Solution: Use a "Trie" (https://en.wikipedia.org/wiki/Trie)
   */
 object AutoComplete {
-  def autoComplete(strs: List[String], prefix: String): List[String] = Trie(strs).complete(prefix)
+  def autoComplete(strs: List[String], prefix: String): List[String] = immutable.Trie(strs).complete(prefix)
 
   def main(args: Array[String]): Unit = {
     val strs = List(
@@ -24,7 +25,7 @@ object AutoComplete {
       "barb"
     )
 
-    val trie = Trie(strs)
+    val trie = immutable.Trie(strs)
 
     println(trie)
 

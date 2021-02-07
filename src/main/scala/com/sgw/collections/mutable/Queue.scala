@@ -1,9 +1,9 @@
-package com.sgw.collections
+package com.sgw.collections.mutable
 
 import scala.reflect.ClassTag
 
 // mutable
-case class MyQueue[T : ClassTag](capacity: Int = 10) {
+case class Queue[T : ClassTag](capacity: Int = 10) {
   private var _size: Int = 0
   private val arr = Array.ofDim[T](capacity)
 
@@ -15,7 +15,7 @@ case class MyQueue[T : ClassTag](capacity: Int = 10) {
   def isEmpty: Boolean = size == 0
   def nonEmpty: Boolean = !isEmpty
 
-  def enqueue(value: T): MyQueue[T] = {
+  def enqueue(value: T): Queue[T] = {
     if (next >= arr.length) {
       next = 0
     }
@@ -52,9 +52,9 @@ case class MyQueue[T : ClassTag](capacity: Int = 10) {
   }
 }
 
-object MyQueue {
+object Queue {
   def main(args: Array[String]): Unit = {
-    val queue = MyQueue[Int](5)
+    val queue = Queue[Int](5)
 
     assert(queue.size == 0)
     assert(queue.isEmpty)

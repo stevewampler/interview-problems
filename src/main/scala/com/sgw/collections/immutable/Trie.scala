@@ -1,4 +1,6 @@
-package com.sgw.collections
+package com.sgw.collections.immutable
+
+import scala.collection.immutable.{List => ScalaList}
 
 /**
   * A data structure used to perform auto-completions on strings.
@@ -7,7 +9,7 @@ package com.sgw.collections
   *
   * @param strs the list of auto-complete strings
   */
-case class Trie(strs: List[String]) {
+case class Trie(strs: ScalaList[String]) {
 
   /**
     * A node in a Trie.
@@ -35,7 +37,7 @@ case class Trie(strs: List[String]) {
       }
     }
 
-    def complete(prefix: String, list: List[String] = List.empty[String]): List[String] = {
+    def complete(prefix: String, list: ScalaList[String] = ScalaList.empty[String]): ScalaList[String] = {
       if (children.isEmpty) {
         return prefix :: list
       }
@@ -58,9 +60,9 @@ case class Trie(strs: List[String]) {
     node.add(str)
   }
 
-  def complete(prefix: String): List[String] = root.findNode(prefix).map { node =>
+  def complete(prefix: String): ScalaList[String] = root.findNode(prefix).map { node =>
     node.complete(prefix)
-  }.getOrElse(List.empty[String]).sorted
+  }.getOrElse(ScalaList.empty[String]).sorted
 
   override def toString: String = s"Trie(${root.toString})"
 }

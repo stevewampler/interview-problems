@@ -1,7 +1,8 @@
 package com.sgw.problems
 
+import com.sgw.windowed.Queue
+
 import scala.annotation.tailrec
-import scala.collection.immutable.Queue
 import scala.io.Source
 
 /**
@@ -160,7 +161,10 @@ object GraphBreadthFirstSearchShortestReach {
     val startNode = nodes(s - 1) // O(1)
 
     // prime the result and the queue with the starting node
-    val acc = go(Map[Node, Int](startNode -> 0), Queue[(Node, Int)](startNode -> 0)) // O(m)
+    val acc = go(
+      Map[Node, Int](startNode -> 0),
+      Queue[(Node, Int)](startNode -> 0)
+    ) // O(m)
 
     // generate the results filtering out the start node
     nodes.map(node => acc.getOrElse(node, -1)).filter(_ != 0) // O(n)

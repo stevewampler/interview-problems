@@ -1,5 +1,6 @@
 package com.sgw.collections
 
+import com.sgw.collections.immutable.{INode, Node}
 import org.scalatest.BeforeAndAfter
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers

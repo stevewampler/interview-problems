@@ -4,6 +4,8 @@ import java.io.{BufferedReader, InputStream, InputStreamReader}
 
 import com.sgw.utils.Timer
 
+import scala.util.Try
+
 /**
   * Given an array of integers, find the subset of non-adjacent elements with the maximum sum. Calculate the sum of that subset.
   *
@@ -83,7 +85,7 @@ object MaxSubsetSum {
     }._1
   }
 
-  def run(inputStream: InputStream): Int = {
+  def run(inputStream: InputStream): Try[Int] = {
     val reader = new BufferedReader(new InputStreamReader(inputStream))
 
     reader.readLine.trim.toInt
@@ -98,13 +100,13 @@ object MaxSubsetSum {
       None
     }
 
-    val (time, result) = Timer {
+    Timer {
       maxSubsetSum(arr)
+    }.map { case (time, result) =>
+      println(s"${arr.slice(0, arr.length.min(15)).mkString(",")}")
+      println(s"$time, $result, $maybeBruteForceResult")
+
+      result
     }
-
-    println(s"${arr.slice(0, arr.length.min(15)).mkString(",")}")
-    println(s"$time, $result, $maybeBruteForceResult")
-
-    result
   }
 }

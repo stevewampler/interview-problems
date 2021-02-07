@@ -1,7 +1,6 @@
-package com.sgw.collections
+package com.sgw.collections.immutable
 
 import scala.annotation.tailrec
-import scala.collection.immutable.Queue
 
 object Tree {
   @tailrec
@@ -11,7 +10,9 @@ object Tree {
     queue.dequeue match {
       case (head, tail) => head match {
         case Node(v, _, _) if v == x => Some(head)
-        case Node(_, l, r) => breadthFirstSearchImpl(x, tail.enqueue(l).enqueue(r))
+        case Node(_, l, r) => {
+          breadthFirstSearchImpl(x, tail.enqueue(l).enqueue(r))
+        }
         case _ => breadthFirstSearchImpl(x, tail)
       }
     }
@@ -23,11 +24,19 @@ trait INode[+T] {
   def left:  INode[T]
   def right: INode[T]
 
-  def breadthFirstSearch[U >: T](x: U): Option[INode[U]] = Tree.breadthFirstSearchImpl(x, Queue(this))
+//  def breadthFirstSearch[U >: T](x: U): Option[INode[U]] = Tree.breadthFirstSearchImpl(x, Queue[INode[U]]().enqueue(value = this))
+//
+//  def depthFirstSearch[U >: T](x: U): Option[INode[U]] = this match {
+//    case Node(v, _, _) if x == v => Some(this)
+//    case Node(_, l, r) => l.depthFirstSearch(x) orElse r.depthFirstSearch(x)
+//    case NilNode => None
+//  }
+
+  def breadthFirstSearch[U >: T](x: U): Option[INode[U]] = Tree.breadthFirstSearchImpl(x, Queue.empty[INode[U]].enqueue(this))
 
   def depthFirstSearch[U >: T](x: U): Option[INode[U]] = this match {
-    case Node(v, l, r) if x == v => Some(this)
-    case Node(v, l, r) => l.depthFirstSearch(x) orElse r.depthFirstSearch(x)
+    case Node(v, _, _) if x == v => Some(this)
+    case Node(_, l, r) => l.depthFirstSearch(x) orElse r.depthFirstSearch(x)
     case NilNode => None
   }
 }

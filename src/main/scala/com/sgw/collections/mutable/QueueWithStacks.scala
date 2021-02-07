@@ -1,8 +1,6 @@
-package com.sgw.collections
+package com.sgw.collections.mutable
 
-
-import java.io._
-import scala.collection._
+import com.sgw.collections.immutable
 
 /**
   * A queue is an abstract data type that maintains the order in which elements were added to it, allowing the oldest
@@ -26,18 +24,24 @@ import scala.collection._
   * From: https://www.hackerrank.com/challenges/ctci-queue-using-two-stacks/problem?h_l=interview&playlist_slugs%5B%5D=interview-preparation-kit&playlist_slugs%5B%5D=stacks-queues&h_r=next-challenge&h_v=zen
   */
 object QueueWithStacks {
-  private def move(fromStack: mutable.Stack[Long], toStack: mutable.Stack[Long]) = {
-    while (fromStack.nonEmpty) {
-      toStack.push(fromStack.pop)
+  private def move(fromStack: immutable.Stack[Long], toStack: immutable.Stack[Long]) = {
+    var fromStackTmp = fromStack
+    var toStackTmp   = toStack
+
+    while (fromStackTmp.nonEmpty) {
+      val (value, newFromStack) = fromStack.pop
+      val newToStack = toStack.push(value)
+      fromStackTmp = newFromStack
+      toStackTmp   = newToStack
     }
   }
 
   case class Queue() {
-    private val enqueueStack = mutable.Stack[Long]()
-    private val dequeueStack = mutable.Stack[Long]()
+    private var enqueueStack = immutable.Stack[Long]()
+    private var dequeueStack = immutable.Stack[Long]()
 
     def enqueue(value: Long): Long = {
-      enqueueStack.push(value)
+      enqueueStack = enqueueStack.push(value)
       value
     }
 
@@ -46,7 +50,11 @@ object QueueWithStacks {
         move(enqueueStack, dequeueStack)
       }
 
-      dequeueStack.pop
+      val (value, newDequeueStack) = dequeueStack.pop
+
+      dequeueStack = newDequeueStack
+
+      value
     }
 
     def peek: Long = {
@@ -57,78 +65,6 @@ object QueueWithStacks {
       dequeueStack.top
     }
   }
-
-//  case class Queue3() {
-//    private var head: Int = 0
-//    private var next: Int = 0
-//    private var size: Int = 0
-//    private var arr = Array.ofDim[Long](100)
-//
-//    private def checkEmpty = {
-//      if (isEmpty) {
-//        throw new RuntimeException("Queue is empty.")
-//      }
-//    }
-//
-//    private def isFull = size == arr.length
-//
-//    override def toString: String = s"head=$head, next=$next, size=$size, arr=${arr.mkString(",")}"
-//
-//    private def growArray = {
-//      val newArr = Array.ofDim[Long](arr.size * 2)
-//
-//      // copy from head to the end of the array
-//      Array.copy(arr, head, newArr, 0, arr.size - head)
-//
-//      // copy from the beginning of the array to the head
-//      Array.copy(arr, 0, newArr, arr.size - head, head)
-//
-//      head = 0
-//      next = arr.size
-//      arr = newArr
-//    }
-//
-//    def isEmpty: Boolean = size == 0
-//
-//    def nonEmpty: Boolean = !isEmpty
-//
-//    def enqueue(value: Long): Long = {
-//      arr(next) = value
-//
-//      next = next + 1
-//
-//      size = size + 1
-//
-//      if (isFull) {
-//        growArray
-//      } else if (next == arr.size) {
-//        next = 0
-//      }
-//
-//      value
-//    }
-//
-//    def dequeue: Long = {
-//      checkEmpty
-//
-//      val value = arr(head)
-//
-//      head = head + 1
-//
-//      if (head == arr.size) {
-//        head = 0
-//      }
-//
-//      size = size - 1
-//
-//      value
-//    }
-//
-//    def peek: Long = {
-//      checkEmpty
-//      arr(head)
-//    }
-//  }
 
   def main(args: Array[String]) {
 
@@ -169,5 +105,3 @@ object QueueWithStacks {
     assert(results == List(14, 14, 60, 78))
   }
 }
-
-

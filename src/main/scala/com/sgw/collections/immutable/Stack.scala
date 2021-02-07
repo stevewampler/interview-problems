@@ -1,19 +1,23 @@
-package com.sgw.collections
+package com.sgw.collections.immutable
 
-case class MyStack[T](private val list: List[T] = List.empty[T]) {
+import com.sgw.collections.immutable
+
+case class Stack[T](private val list: List[T] = List.empty[T]) {
   def size: Int = list.size
 
   def isEmpty: Boolean = size == 0
   def nonEmpty: Boolean = !isEmpty
 
-  def push(value: T): MyStack[T] = MyStack(value :: list)
+  def push(value: T): Stack[T] = Stack(value :: list)
 
-  def pop: (T, MyStack[T]) = (list.head, MyStack(list.tail))
+  def pop: (T, Stack[T]) = (list.head, Stack(list.tail))
+
+  def top: T = list.head
 }
 
-object MyStack {
+object Stack {
   def main(args: Array[String]): Unit = {
-    val stack = MyStack[Int]()
+    val stack = immutable.Stack[Int]()
     assert(stack.isEmpty)
     assert(!stack.nonEmpty)
 

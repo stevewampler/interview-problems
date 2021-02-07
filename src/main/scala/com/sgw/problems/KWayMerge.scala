@@ -15,7 +15,7 @@ object KWayMerge extends App {
     listOfLists.flatten.sorted
   }
 
-  // brute force: flatten the lists and resort it
+  // brute force: flatten the lists and resort it using a max-heap
   // O(n log n)
   def merge2(listOfLists: List[List[Int]], list: List[Int] = List()): List[Int] = {
     val arr = listOfLists.flatten.toArray
@@ -39,10 +39,11 @@ object KWayMerge extends App {
     val newMinList = minList.tail
 
     val newListOfLists = listOfLists.map { list =>
-      if (list == minList)
+      if (list == minList) {
         newMinList
-      else
+      } else {
         list
+      }
     }.filter { list =>
       list.nonEmpty
     }
@@ -50,8 +51,7 @@ object KWayMerge extends App {
     merge3(newListOfLists, minValue :: list)
   }
 
-  // use a heap to find the min list (O(log k))
-  // O(n log k)
+  // use a heap to find the min list in O(log k) time and do it O(n) times so O(n log k)
   def merge4(listOfLists: List[List[Int]]): List[Int] = {
 
     implicit val listOrdering = new Ordering[List[Int]] {
@@ -67,7 +67,9 @@ object KWayMerge extends App {
 
       if (arrayOfLists.isEmpty) return list
 
-      Heapsort.heapify(arrayOfLists)
+      // this mutates the arrayOfLists, which is okay because it's not exposed outside of the merge4 function
+      // O(log k)
+      Heapsort.heapify(arrayOfLists)(listOrdering)
 
       val minList = arrayOfLists.head
 

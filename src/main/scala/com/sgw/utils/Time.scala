@@ -77,14 +77,20 @@ object Time {
     }
   })
 
-  lazy val ZERO     = millis(0L)
-  lazy val INFINITE = millis(Long.MaxValue)
+  lazy val ZERO     = nanos(0L)
+  lazy val INFINITE = nanos(Long.MaxValue)
   lazy val INVALID  = INFINITE
 
-  val MILLIS_PER_SECOND = 1000
-  val MILLIS_PER_MINUTE = MILLIS_PER_SECOND * 60
-  val MILLIS_PER_HOUR   = MILLIS_PER_MINUTE * 60
-  val MILLIS_PER_DAY    = MILLIS_PER_HOUR * 24
+//  val MILLIS_PER_SECOND = 1000
+//  val MILLIS_PER_MINUTE = MILLIS_PER_SECOND * 60
+//  val MILLIS_PER_HOUR   = MILLIS_PER_MINUTE * 60
+//  val MILLIS_PER_DAY    = MILLIS_PER_HOUR * 24
+
+  val NANOS_PER_MILLI  = 1e6
+  val NANOS_PER_SECOND = NANOS_PER_MILLI * 1000
+  val NANOS_PER_MINUTE = NANOS_PER_SECOND * 60
+  val NANOS_PER_HOUR   = NANOS_PER_MINUTE * 60
+  val NANOS_PER_DAY    = NANOS_PER_HOUR * 24
 
   def formatAsDate(date: Date): String = YearMonthDayDateFormat.synchronized {
     YearMonthDayDateFormat.format(date)
@@ -125,7 +131,7 @@ object Time {
    *
    * @return the current time as a Time object.
    */
-  def now = millis(System.currentTimeMillis())
+  def now: Time = nanos(System.nanoTime())
 
   /**
    * Returns a random time object between the specified fromTime (inclusive) and toTime (exclusive).
@@ -221,7 +227,7 @@ object Time {
  * @param time the time value
  * @param units the time units
  */
-case class Time(time: Long, units: TimeUnit = MILLISECONDS) extends Comparable[Time] {
+case class Time(time: Long, units: TimeUnit = NANOSECONDS) extends Comparable[Time] {
   def isNanos   = units == NANOSECONDS
   def isMicros  = units == MICROSECONDS
   def isMillis  = units == MILLISECONDS
@@ -249,72 +255,57 @@ case class Time(time: Long, units: TimeUnit = MILLISECONDS) extends Comparable[T
 
   def random: Time = this * scala.math.random
 
-  def +(rhs: Time) = Time.millis(millis + rhs.millis)
-  def -(rhs: Time) = Time.millis(millis - rhs.millis)
-  def /(rhs: Time) = Time.millis(millis / rhs.millis)
-  def *(rhs: Time) = Time.millis(millis * rhs.millis)
+  def +(rhs: Time): Time = Time.nanos(nanos + rhs.nanos)
+  def -(rhs: Time): Time = Time.nanos(nanos - rhs.nanos)
+  def /(rhs: Time): Time = Time.nanos(nanos / rhs.nanos)
+  def *(rhs: Time): Time = Time.nanos(nanos * rhs.nanos)
 
-  def /(value: Double) = Time.millis((millis / value).toLong)
-  def *(value: Double) = Time.millis((millis * value).toLong)
+  def /(timeNanos: Double): Time = Time.nanos((nanos / timeNanos).toLong)
+  def *(timeNanos: Double): Time = Time.nanos((nanos * timeNanos).toLong)
 
-  def +(value: Long) = Time.millis(millis + value)
-  def -(value: Long) = Time.millis(millis - value)
-  def /(value: Long) = Time.millis(millis / value)
-  def *(value: Long) = Time.millis(millis * value)
+  def +(timeNanos: Long): Time = Time.nanos(nanos + timeNanos)
+  def -(timeNanos: Long): Time = Time.nanos(nanos - timeNanos)
+  def /(timeNanos: Long): Time = Time.nanos(nanos / timeNanos)
+  def *(timeNanos: Long): Time = Time.nanos(nanos * timeNanos)
 
-  def isZero     = time == 0
-  def isNotZero  = !isZero
-  def isPositive = time > 0
-  def isPositiveOrZero = time >= 0
-  def isNegative = time < 0
-  def isNegativeOrZero = time <= 0
-  def isInfinite = time == Long.MaxValue
-  def isNotInfinite = !isInfinite
-  def isInvalid = this == Time.INVALID
+  def isZero: Boolean = time == 0
+  def isNotZero: Boolean = !isZero
+  def isPositive: Boolean = time > 0
+  def isPositiveOrZero: Boolean = time >= 0
+  def isNegative: Boolean = time < 0
+  def isNegativeOrZero: Boolean = time <= 0
+  def isInfinite: Boolean = time == Long.MaxValue
+  def isNotInfinite: Boolean = !isInfinite
+  def isInvalid: Boolean = this == Time.INVALID
 
-  def ==(ms: Long) = millis == ms
-  def < (ms: Long) = millis <  ms
-  def > (ms: Long) = millis >  ms
-  def <=(ms: Long) = millis <= ms
-  def >=(ms: Long) = millis >= ms
+  def ==(timeNanos: Long): Boolean = nanos == timeNanos
+  def < (timeNanos: Long): Boolean = nanos <  timeNanos
+  def > (timeNanos: Long): Boolean = nanos >  timeNanos
+  def <=(timeNanos: Long): Boolean = nanos <= timeNanos
+  def >=(timeNanos: Long): Boolean = nanos >= timeNanos
 
-  def ==(rhs: Time) = millis == rhs.millis
-  def < (rhs: Time) = millis <  rhs.millis
-  def > (rhs: Time) = millis >  rhs.millis
-  def <=(rhs: Time) = millis <= rhs.millis
-  def >=(rhs: Time) = millis >= rhs.millis
+  def ==(rhs: Time): Boolean = nanos == rhs.nanos
+  def < (rhs: Time): Boolean = nanos <  rhs.nanos
+  def > (rhs: Time): Boolean = nanos >  rhs.nanos
+  def <=(rhs: Time): Boolean = nanos <= rhs.nanos
+  def >=(rhs: Time): Boolean = nanos >= rhs.nanos
 
-  def compareTo(rhs: Time) = millis.compareTo(rhs.millis)
+  def compareTo(rhs: Time): Int = nanos.compareTo(rhs.nanos)
 
-  def min(rhs: Time): Time = if (units == rhs.units) {
-    if (time < rhs.time) {
-      this
-    } else {
-      rhs
-    }
-  } else {
-    min(rhs.convertTo(units))
-  }
+  def min(rhs: Time): Time = Time(nanos.min(rhs.nanos), NANOSECONDS)
 
-  def max(rhs: Time): Time = if (units == rhs.units) {
-    if (time > rhs.time) {
-      this
-    } else {
-      rhs
-    }
-  } else {
-    max(rhs.convertTo(units))
-  }
+  def max(rhs: Time): Time = Time(nanos.max(rhs.nanos), NANOSECONDS)
 
   def toSimplifiedUnits: Time = {
-    val ms = millis
+    val n = nanos
 
-    if (ms == 0) toSeconds
-    else if (ms % Time.MILLIS_PER_DAY    == 0) toDays
-    else if (ms % Time.MILLIS_PER_HOUR   == 0) toHours
-    else if (ms % Time.MILLIS_PER_MINUTE == 0) toMinutes
-    else if (ms % Time.MILLIS_PER_SECOND == 0) toSeconds
-    else toMillis
+    if (n == 0) toSeconds
+    else if (n % Time.NANOS_PER_DAY    == 0) toDays
+    else if (n % Time.NANOS_PER_HOUR   == 0) toHours
+    else if (n % Time.NANOS_PER_MINUTE == 0) toMinutes
+    else if (n % Time.NANOS_PER_SECOND == 0) toSeconds
+    else if (n % Time.NANOS_PER_MILLI  == 0) toMillis
+    else toNanos
   }
 
   def sleep(): Try[Unit] = Try { if (isPositive) Thread.sleep(millis) }
@@ -322,44 +313,46 @@ case class Time(time: Long, units: TimeUnit = MILLISECONDS) extends Comparable[T
   def convertTo(toUnit: TimeUnit): Time = if (units == toUnit) this else Time(toUnit.convert(time, units), toUnit)
 
   def toDouble(toUnit: TimeUnit): Double = toUnit match {
-    case TimeUnit.NANOSECONDS => millis.toDouble * 1000000
-    case TimeUnit.MICROSECONDS => millis.toDouble * 1000
+    case TimeUnit.NANOSECONDS => nanos.toDouble
+    case TimeUnit.MICROSECONDS => micros.toDouble
     case TimeUnit.MILLISECONDS => millis.toDouble
-    case TimeUnit.SECONDS => millis.toDouble / Time.MILLIS_PER_SECOND
-    case TimeUnit.MINUTES => millis.toDouble / Time.MILLIS_PER_MINUTE
-    case TimeUnit.HOURS => millis.toDouble / Time.MILLIS_PER_HOUR
-    case TimeUnit.DAYS => millis.toDouble / Time.MILLIS_PER_DAY
+    case TimeUnit.SECONDS => seconds.toDouble
+    case TimeUnit.MINUTES => minutes.toDouble
+    case TimeUnit.HOURS => hours.toDouble
+    case TimeUnit.DAYS => days.toDouble
   }
 
   def toDuration = Duration(time, units)
 
   def roundUp: Time = {
-    val ms = toMillis.time
+    val n = nanos
 
-    if (ms < Time.MILLIS_PER_SECOND)      toMillis
-    else if (ms < Time.MILLIS_PER_MINUTE) toSeconds
-    else if (ms < Time.MILLIS_PER_HOUR)   toMinutes
-    else if (ms < Time.MILLIS_PER_DAY)    toHours
+    if (n == 0) toNanos
+    else if (n < Time.NANOS_PER_MILLI)  toMillis
+    else if (n < Time.NANOS_PER_SECOND) toSeconds
+    else if (n < Time.NANOS_PER_MINUTE) toMinutes
+    else if (n < Time.NANOS_PER_HOUR)   toHours
+    else if (n < Time.NANOS_PER_DAY)    toDays
     else toDays
   }
 
-  def toMap = Map("time" -> time, "units" -> units)
+  def toMap: Map[String, Any] = Map("time" -> time, "units" -> units)
 
-  def delta(to: Time) = if (this.isInvalid || to.isInvalid) Time.INVALID else { to - this }
+  def delta(to: Time): Time = if (this.isInvalid || to.isInvalid) Time.INVALID else { to - this }
 
-  def age = delta(Time.now)
+  def age: Time = delta(Time.now)
 
-  lazy val toDateString = Time.formatAsDate(this)
+  lazy val toDateString: String = Time.formatAsDate(this)
 
-  lazy val toISO8601DateString = Time.formatAsISO8601(this)
+  lazy val toISO8601DateString: String = Time.formatAsISO8601(this)
 
-  def singularUnitsString = pluralUnitsString.substring(0, pluralUnitsString.length - 1)
+  def singularUnitsString: String = pluralUnitsString.substring(0, pluralUnitsString.length - 1)
 
-  def pluralUnitsString = units.toString.toLowerCase
+  def pluralUnitsString: String = units.toString.toLowerCase
 
-  def unitsString = if (time == 1L) singularUnitsString else pluralUnitsString
+  def unitsString: String = if (time == 1L) singularUnitsString else pluralUnitsString
 
-  def toStringImpl = time.toString + " " + unitsString
+  def toStringImpl: String = time.toString + " " + unitsString
 
   override def toString: String = toSimplifiedUnits.toStringImpl
 
